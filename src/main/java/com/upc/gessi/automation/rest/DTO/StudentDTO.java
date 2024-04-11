@@ -1,31 +1,47 @@
 package com.upc.gessi.automation.rest.DTO;
 
-import com.upc.gessi.automation.domain.models.Student;
 import com.upc.gessi.automation.domain.respositories.StudentRepository;
-import com.upc.gessi.automation.rest.IStudent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-public class StudentDTO implements IStudent {
+public class StudentDTO  {
+
+    private Integer id;
+    private String name;
+    private Integer id_project;
+    private String username_github;
+    private String username_taiga;
+    private String username_sheets;
 
     @Autowired
     private StudentRepository StudentRep;
 
-    @Transactional
-    @Override
-    public Student save(Student student) {
-        return StudentRep.save(student);
+    public StudentDTO(String name, Integer id_project, String username_github,String username_taiga,String username_sheets){
+        this.name= name;
+        this.id_project= id_project;
+        this.username_github= username_github;
+        this.username_taiga= username_taiga;
+        this.username_sheets= username_sheets;
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public Student findById(Integer id) {
-        return StudentRep.findById(id).orElse(null);
+    public String getName(){
+        return name;
     }
 
-    @Transactional
-    @Override
-    public void delete(Student student) {
-        StudentRep.delete(student);
+    public Integer getIdProject(){
+        return id_project;
     }
+
+    public String getUsername_github(){
+        return username_github;
+    }
+
+    public String getUsername_taiga(){
+        return username_taiga;
+    }
+
+    public String getUsername_sheets(){
+        return username_sheets;
+    }
+
+
 }

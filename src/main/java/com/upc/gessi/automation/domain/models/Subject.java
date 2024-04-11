@@ -12,20 +12,23 @@ import java.io.Serializable;
 public class Subject implements Serializable {
 
     @Id
-    @Column
+    @Column(name ="name")
     private String name;
 
-    @Column
+    @Column(name="te_github")
     private Boolean github;
 
-    @Column
+    @Column(name="token_github")
     private String token_github;
 
-    @Column
+    @Column(name ="te_taiga")
     private Boolean taiga;
 
-    @Column
+    @Column(name = "te_sheets")
     private Boolean sheets;
 
+    public String getToken(){
+        return token_github;
+    }
 
 }

@@ -10,14 +10,15 @@ public class Student implements Serializable {
 
     @Id
     @Column (name = "id")
-    @GeneratedValue (strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "student_seq")
+    @SequenceGenerator(name="student_seq", sequenceName="student_id_seq", allocationSize=1)
     private Integer id;
 
     @Column (name = "name")
     private String name;
 
     @Column (name = "id_project")
-    private String id_project;
+    private Integer id_project;
 
     @Column (name = "username_github")
     private String username_github;
@@ -28,7 +29,21 @@ public class Student implements Serializable {
     @Column (name = "username_sheets")
     private String username_sheets;
 
+    public Student(String name, Integer id_project, String username_github,String username_taiga,String username_sheets){
+        this.name= name;
+        this.id_project= id_project;
+        this.username_github= username_github;
+        this.username_taiga= username_taiga;
+        this.username_sheets= username_sheets;
+    }
+
+    public Student() {
+
+    }
+
     public String getName() {
         return name;
     }
+
+
 }

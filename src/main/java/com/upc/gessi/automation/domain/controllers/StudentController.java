@@ -1,6 +1,9 @@
 package com.upc.gessi.automation.domain.controllers;
 
+import com.upc.gessi.automation.domain.models.Project;
 import com.upc.gessi.automation.domain.respositories.StudentRepository;
+import com.upc.gessi.automation.rest.DTO.ProjectDTO;
+import com.upc.gessi.automation.rest.DTO.StudentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import com.upc.gessi.automation.domain.models.Student;
@@ -21,6 +24,15 @@ public class StudentController {
         studentsIt.forEach(student -> studentsList.add(student.getName()));
         return studentsList;
     }
+
+    public void createStudent(StudentDTO sDTO){
+        Student student = new Student(sDTO.getName(),sDTO.getIdProject(),sDTO.getUsername_github(),sDTO.getUsername_taiga(),sDTO.getUsername_sheets());
+        StudentRep.save(student);
+    }
+
+
+
+
 
 
 }
