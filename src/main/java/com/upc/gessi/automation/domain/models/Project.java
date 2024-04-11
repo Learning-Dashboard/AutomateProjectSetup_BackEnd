@@ -58,5 +58,9 @@ public class Project implements Serializable {
         return id;
     }
 
+    public String getID_github(){ return ID_github;}
+
+    public String getID_taiga(){return ID_taiga;}
+
 
 }

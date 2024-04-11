@@ -29,7 +29,8 @@ public class ProjectRestController {
 
     @GetMapping(value = "/config")
     public Boolean getconfigProject(@RequestParam(name="name") String name, @RequestParam(name= "subject") String subject){
-        return projectController.configQR_connect(name,subject);
+        projectController.configQR_connect(name,subject,"github");
+        return projectController.configQR_connect(name,subject,"taiga");
 
     }
 
