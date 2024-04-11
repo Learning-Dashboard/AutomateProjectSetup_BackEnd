@@ -32,15 +32,30 @@ public class Project implements Serializable {
     @Column(name= "URL_sheets", nullable = true)
     private String URL_sheets;
 
+    @Column(name= "status")
+    private String Status;
+
+    @Column(name= "ID_github")
+    private String ID_github;
+
+    @Column(name= "ID_taiga")
+    private String ID_taiga;
+
     public Project() {
 
     }
-    public Project(String name, String subject, String URL_g, String URL_t, String URL_s){
+    public Project(String name, String subject, String URL_g, String URL_t, String URL_s,String ID_g, String ID_t){
         this.name= name;
         this.subject= subject;
         this.URL_github=URL_g;
         this.URL_taiga=URL_t;
         this.URL_sheets=URL_s;
+        this.ID_github=ID_g;
+        this.ID_taiga=ID_t;
+    }
+
+    public Integer getId(){
+        return id;
     }
 
 
