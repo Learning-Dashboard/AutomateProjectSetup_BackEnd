@@ -1,63 +1,23 @@
 package com.upc.gessi.automation.domain.controllers;
 
 import com.upc.gessi.automation.domain.models.Project;
-import com.upc.gessi.automation.domain.respositories.ProjectRepository;
-import com.upc.gessi.automation.rest.DTO.ProjectDTO;
+import org.hibernate.validator.constraints.CodePointLength;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Controller;
 
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Controller
-public class ProjectController {
+public class ConfigurationController {
 
     @Autowired
-    ProjectRepository projectRep;
+    ProjectController projectController;
 
-    public ProjectController(ProjectRepository projectRep) {
-        this.projectRep = projectRep;
-    }
-
-    public Map<String,String> getProjects() {
-        Map<String, String> list = new HashMap<>();
-        Iterable<Project> projects = projectRep.findAll();
-        for (Project project : projects) {
-            String name = project.getName();
-            String subj = project.getSubject();
-            list.put(name, subj);
-        }
-        return list;
-    }
-
-    public void createProject(ProjectDTO pDTO){
-        Project project = new Project(pDTO.getName(),pDTO.getSubject(),pDTO.getURL_github(),pDTO.getURL_taiga(),pDTO.getURL_sheets(), pDTO.getID_github(), pDTO.getID_taiga());
-        projectRep.save(project);
-
-    }
-
-    public Integer getId(String name, String subject) {
-        Project project = projectRep.findByNameAndSubject(name, subject);
-        return project.getId();
-    }
-    public String getIdGithub(String name, String subject){
-        Project project = projectRep.findByNameAndSubject(name, subject);
-        return project.getID_github();
-    }
-
-    public String getIdTaiga(String name, String subject){
-        Project project = projectRep.findByNameAndSubject(name, subject);
-        return project.getID_taiga();
-    }
-
-    /* Integer getLastTask(String subject,String type){
+    public Integer getLastTask(String subject,String type){
         Path path = Paths.get("C:/Users/norac/Desktop/aqui/workshop/Learning Dashboard/docker/node-qrconnect");
         System.out.print(path);
         Path PathFile = path.resolve("config/"+type+"_" + subject + "/"+type+".properties");
@@ -77,7 +37,6 @@ public class ProjectController {
 
                     }
                 }
-
             }
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -86,6 +45,7 @@ public class ProjectController {
         }
         return num_teams;
     }
+
     public Boolean configQR_connect_script(String name,String subject,String type){
         Path path = Paths.get("C:/Users/norac/Desktop/aqui/workshop/Learning Dashboard/docker/node-qrconnect");
         System.out.print(path);
@@ -145,7 +105,6 @@ public class ProjectController {
         }
         return true;
     }
-
     public Boolean configQR_connect_configM(String name, String subject, String type){
         Path path = Paths.get("C:/Users/norac/Desktop/aqui/workshop/Learning Dashboard/docker/node-qrconnect");
         System.out.print(path);
@@ -158,7 +117,7 @@ public class ProjectController {
         StringBuilder contentAdd = new StringBuilder();
         String newLine = null;
         if(type == "github") {
-             newLine = "github_" + subject + "_" + name + ".commits, github_" + subject + "_" + name + ".issues \n";
+            newLine = "github_" + subject + "_" + name + ".commits, github_" + subject + "_" + name + ".issues \n";
         }
         else if(type == "taiga") {
             newLine = "taiga_" + subject + "_" + name + ".issues, taiga_" + subject + "_" + name + ".epics, \\ \n" + "taiga_" + subject + "_" + name + ".userstories, taiga_" + subject + "_" + name + ".tasks \n";
@@ -197,13 +156,15 @@ public class ProjectController {
 
                 modifiedContent.insert(index + lastGithubLine.length() + 4, newLine);
             }
+
+            // Imprime el contenido modificado
             System.out.println(modifiedContent.toString());
 
             // Si deseas guardar los cambios en el archivo, puedes hacerlo aquí
-             FileWriter fileWriter = new FileWriter(file);
-             BufferedWriter writer = new BufferedWriter(fileWriter);
-             writer.write(modifiedContent.toString());
-             writer.close();
+            FileWriter fileWriter = new FileWriter(file);
+            BufferedWriter writer = new BufferedWriter(fileWriter);
+            writer.write(modifiedContent.toString());
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -223,26 +184,28 @@ public class ProjectController {
 
         Integer num_task = getLastTask(subject,type);
         System.out.print(num_task);
-        Project proj_config = projectRep.findByNameAndSubject(name,subject);
         String id;
         String newTask = null;
         if(type == "github"){
-            id=proj_config.getID_github();
+            System.out.print("AAAAAAAAAAAAAAAAAAAAAAAAAAA");
+            id=projectController.getIdGithub(name,subject);
+            System.out.print("   "+ id+ "\n");
+
             newTask = "tasks."+num_task+".github.url="+id+"\n" +
                     "tasks."+num_task+".github.commit.topic=github_"+subject+"_"+name+".commits\n" +
                     "tasks."+num_task+".github.issue.topic=github_"+subject+"_"+name+".issues\n" +
                     "tasks."+num_task+".taiga.task.topic=taiga_"+subject+"_"+name+".tasks\n";
         }
         else if(type == "taiga"){
-            id = proj_config.getID_taiga();
+            System.out.print("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+            id = projectController.getIdTaiga(name,subject);
+            System.out.print("   "+ id+ "\n");
             newTask = "tasks."+num_task+".slug="+id+"\n" +
                     "tasks."+num_task+".taiga.issue.topic=taiga_"+subject+"_"+name+".issues\n" +
                     "tasks."+num_task+".taiga.epic.topic=taiga_"+subject+"_"+name+".epics\n" +
                     "tasks."+num_task+".taiga.userstory.topic=taiga_"+subject+"_"+name+".userstories\n" +
                     "tasks."+num_task+".taiga.task.topic=taiga_"+subject+"_"+name+".tasks\n";
-            
         }
-        
         File sourceFile = file.toFile();
         StringBuilder contentAdd = new StringBuilder();
         Integer num_teams = 0;
@@ -265,9 +228,10 @@ public class ProjectController {
                     }
                 }
                 content.append(line).append("\n");
-            }
 
-            /*try (BufferedWriter writer = new BufferedWriter(new FileWriter(pathi))) {
+            }
+            content.append(newTask).append("\n");
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(pathi))) {
                 writer.write(content.toString());
                 System.out.println("Nueva tarea añadida al archivo con éxito.");
             } catch (IOException e) {
@@ -277,7 +241,5 @@ public class ProjectController {
             e.printStackTrace();
         }
         return true;
-    }*/
-
-
+    }
 }

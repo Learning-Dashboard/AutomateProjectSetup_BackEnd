@@ -62,5 +62,13 @@ public class Project implements Serializable {
 
     public String getID_taiga(){return ID_taiga;}
 
+    public String getName(){
+        return name;
+    }
+
+    public String getSubject(){
+        return subject;
+    }
+
 
 }
