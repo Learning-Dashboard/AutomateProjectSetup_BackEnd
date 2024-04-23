@@ -31,4 +31,14 @@ public class Subject implements Serializable {
         return token_github;
     }
 
+    public Boolean getTaiga(){
+        return taiga;
+    }
+    public Boolean getGithub(){
+        return github;
+    }
+    public Boolean getSheets(){
+        return sheets;
+    }
+
 }

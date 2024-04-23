@@ -9,6 +9,7 @@ import java.util.List;
 @Repository
 public interface ProjectRepository extends CrudRepository<Project,Integer> {
 
-    List<Project> findByNameAndSubject(String name,String subject);
+    Project findByNameAndSubject(String name,String subject);
+
 
 }

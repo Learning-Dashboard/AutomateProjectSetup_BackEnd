@@ -17,4 +17,18 @@ public class SubjectController {
         Subject sub = subjectRepository.findByName(name);
         return sub.getToken(); // Devuelve el ID del primer proyecto encontrado
     }
+    public Boolean getTaiga(String name){
+        Subject sub = subjectRepository.findByName(name);
+        System.out.print(sub.getTaiga());
+        return sub.getTaiga();
+    }
+    public Boolean getGithub(String name){
+        Subject sub = subjectRepository.findByName(name);
+        return sub.getGithub();
+    }
+
+    public Boolean getSheets(String name){
+        Subject sub = subjectRepository.findByName(name);
+        return sub.getSheets();
+    }
 }
