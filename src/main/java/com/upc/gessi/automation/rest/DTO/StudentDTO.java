@@ -7,7 +7,7 @@ public class StudentDTO  {
 
     private Integer id;
     private String name;
-    private Integer id_project;
+    private Integer project;
     private String username_github;
     private String username_taiga;
     private String username_sheets;
@@ -17,7 +17,7 @@ public class StudentDTO  {
 
     public StudentDTO(String name, Integer id_project, String username_github,String username_taiga,String username_sheets){
         this.name= name;
-        this.id_project= id_project;
+        this.project= id_project;
         this.username_github= username_github;
         this.username_taiga= username_taiga;
         this.username_sheets= username_sheets;
@@ -28,7 +28,7 @@ public class StudentDTO  {
     }
 
     public Integer getIdProject(){
-        return id_project;
+        return project;
     }
 
     public String getUsername_github(){

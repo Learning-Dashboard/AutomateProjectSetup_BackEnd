@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +18,9 @@ public class ConfigurationController {
 
     @Autowired
     ProjectController projectController;
+
+    @Autowired
+    StudentController studentController;
 
     public Integer getLastTask(String subject,String type){
         Path path = Paths.get("C:/Users/norac/Desktop/aqui/workshop/Learning Dashboard/docker/node-qrconnect");
@@ -241,5 +246,92 @@ public class ConfigurationController {
             e.printStackTrace();
         }
         return true;
+    }
+
+    public Boolean getEvalProjects(String name, String subject){
+        Path path = Paths.get("LD-queryGenerator","resources");
+        Path newPath = path.resolve("names.txt");
+        System.out.print(newPath);
+        String pathi = newPath.toString();
+        //System.out.println(pathi);
+
+        Integer id_proj = projectController.getId(name,subject);
+        ArrayList<String> github_usernames = studentController.getStudentsGithubProject(id_proj);
+        ArrayList<String> taiga_usernames = studentController.getStudentsTaigaProject(id_proj);
+
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(pathi, false))) {
+            writer.write(name+ "\n");
+            for(int i = 0; i < github_usernames.size(); i++){
+                writer.write(github_usernames.get(i));
+                if(i < github_usernames.size() -1){
+                    writer.write(" ");
+                }
+            }
+            writer.write("\n");
+            for(int i = 0; i < taiga_usernames.size(); i++){
+                writer.write(taiga_usernames.get(i));
+                if(i < taiga_usernames.size() -1){
+                    writer.write(" ");
+                }
+            }
+            writer.close();
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return true;
+    }
+
+
+
+    public void createFolderProject(String name, String subject) throws IOException, InterruptedException {
+
+        String directorioActual = System.getProperty("user.dir");
+
+        // Ruta del comando Python
+        String comandoPython = "java";
+
+        // Ruta relativa del script Python
+        String rutaRelativaScript = "\\LD-queryGenerator\\main.java";
+
+        // Convertir la ruta relativa a una ruta absoluta
+        File archivoScript = new File(directorioActual, rutaRelativaScript);
+        String rutaAbsolutaScript = archivoScript.getAbsolutePath();
+
+        // Combinar el comando y la ruta del script
+        String comandoCompleto = comandoPython + " " + rutaAbsolutaScript;
+
+        // Ejecutar el comando
+        Process proceso = Runtime.getRuntime().exec(comandoCompleto);
+        System.out.print(proceso);
+        System.out.print("CACATUA \n");
+
+        // Leer la salida del proceso
+        BufferedReader reader = new BufferedReader(new InputStreamReader(proceso.getInputStream()));
+        String linea;
+        while ((linea = reader.readLine()) != null) {
+            System.out.println(linea);
+        }
+
+        // Esperar a que el proceso termine
+        int resultado = proceso.waitFor();
+        System.out.print(proceso.getErrorStream());
+        System.out.println("El proceso terminó con código de salida: " + resultado);
+
+        String dir_home = System.getProperty("user.dir");
+        System.out.print(dir_home);
+
+        String dir_project ="\\LD-queryGenerator\\result\\"+name;
+
+        System.out.print(dir_project);
+
+        File dir_act = new File(dir_home+dir_project);
+        File dir_new = new File("C:/Users/norac/Desktop/aqui/workshop/Learning Dashboard/docker/node-qreval/projects/"+subject+"_"+name);
+
+        boolean exito = dir_act.renameTo(dir_new);
+        System.out.print(exito);
+
     }
 }

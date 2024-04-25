@@ -30,6 +30,26 @@ public class StudentController {
         StudentRep.save(student);
     }
 
+    public ArrayList<String> getStudentsGithubProject(Integer id_proj){
+        List<Student> students = StudentRep.findAllByProject(id_proj);
+        ArrayList<String> github_usernames = new ArrayList<>();
+        for(Student student : students){
+            System.out.print(student.getUsername_github());
+            github_usernames.add(student.getUsername_github());
+        }
+        return github_usernames;
+    }
+
+    public ArrayList<String> getStudentsTaigaProject(Integer id_proj){
+        List<Student> students = StudentRep.findAllByProject(id_proj);
+        ArrayList<String> taiga_usernames = new ArrayList<>();
+        for(Student student : students){
+            System.out.print(student.getUsername_taiga());
+            taiga_usernames.add(student.getUsername_taiga());
+        }
+        return taiga_usernames;
+    }
+
 
 
 

@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/config")
 public class ConfigurationRestController {
@@ -36,6 +38,14 @@ public class ConfigurationRestController {
             configurationController.configQR_connect_configGT(name, subject, "sheets");
             configurationController.configQR_connect_script(name,subject,"sheets");
         }
+        return true;
+
+    }
+
+    @GetMapping(value="/eval")
+    public Boolean getEvalProject (@RequestParam(name="name") String name, @RequestParam(name= "subject") String subject) throws IOException, InterruptedException {
+        configurationController.getEvalProjects(name,subject);
+        configurationController.createFolderProject(name,subject);
         return true;
 
     }

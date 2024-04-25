@@ -29,14 +29,14 @@ public class StudentRestController {
     public void createStudent(StudentDTO studentRequest){
         try{
             String name = studentRequest.getName();
-            Integer idProject = studentRequest.getIdProject();
+            Integer Project = studentRequest.getIdProject();
             String username_github = studentRequest.getUsername_github();
             String username_taiga = studentRequest.getUsername_taiga();
             String username_sheets = studentRequest.getUsername_sheets();
 
-            System.out.print(" sdgfgfdg     "+name+ "   "+idProject);
+            System.out.print(" sdgfgfdg     "+name+ "   "+Project);
 
-            StudentDTO sDTO = new StudentDTO(name,idProject,username_github,username_taiga,username_sheets);
+            StudentDTO sDTO = new StudentDTO(name,Project,username_github,username_taiga,username_sheets);
             studentcontroller.createStudent(sDTO);
 
         }catch (Exception e){
