@@ -46,6 +46,7 @@ public class ConfigurationRestController {
     public Boolean getEvalProject (@RequestParam(name="name") String name, @RequestParam(name= "subject") String subject) throws IOException, InterruptedException {
         configurationController.getEvalProjects(name,subject);
         configurationController.createFolderProject(name,subject);
+        configurationController.configQR_eval_script(name,subject);
         return true;
 
     }

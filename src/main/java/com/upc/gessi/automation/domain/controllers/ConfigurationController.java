@@ -192,7 +192,6 @@ public class ConfigurationController {
         String id;
         String newTask = null;
         if(type == "github"){
-            System.out.print("AAAAAAAAAAAAAAAAAAAAAAAAAAA");
             id=projectController.getIdGithub(name,subject);
             System.out.print("   "+ id+ "\n");
 
@@ -202,7 +201,7 @@ public class ConfigurationController {
                     "tasks."+num_task+".taiga.task.topic=taiga_"+subject+"_"+name+".tasks\n";
         }
         else if(type == "taiga"){
-            System.out.print("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+
             id = projectController.getIdTaiga(name,subject);
             System.out.print("   "+ id+ "\n");
             newTask = "tasks."+num_task+".slug="+id+"\n" +
@@ -247,6 +246,54 @@ public class ConfigurationController {
         }
         return true;
     }
+    public void configQR_eval_script(String name, String subject){
+        Path path = Paths.get("C:/Users/norac/Desktop/aqui/workshop/Learning Dashboard/docker/node-qreval");
+        System.out.print(path);
+        Path newPath = path.resolve("scripts/run_eval_periodic.sh");
+        String pathi = newPath.toString();
+        System.out.println(pathi);
+
+        try {
+            // Leer el archivo de script Bash
+            BufferedReader reader = new BufferedReader(new FileReader(pathi));
+            StringBuilder scriptContent = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("FACTORS_COLLECTION_NAME=(")) {
+                    int endIndex = line.indexOf(')');
+                    if (endIndex != -1) {
+                        line = line.substring(0, endIndex) +", "+ " \"" + "factors."+name + "\"" + line.substring(endIndex);
+                    }
+                }
+                if(line.contains("STRATEGIC_INDICATORS_COLLECTION_NAME=(")){
+                    int endIndex = line.indexOf(')');
+                    if (endIndex != -1) {
+                        line = line.substring(0, endIndex) +", "+ " \"" + "strategic_indicators."+name + "\"" + line.substring(endIndex);
+                    }
+                }
+                if (line.contains("RELATIONS_COLLECTION_NAME=(")) {
+                    int endIndex = line.indexOf(')');
+                    if (endIndex != -1) {
+                        line = line.substring(0, endIndex) +", "+ " \"" + "relations."+name+".epics" + "\"" + line.substring(endIndex);
+                    }
+                }
+
+                scriptContent.append(line).append("\n");
+            }
+            reader.close();
+
+            // Escribir el archivo modificado
+            BufferedWriter writer = new BufferedWriter(new FileWriter(pathi));
+            writer.write(scriptContent.toString());
+            writer.close();
+
+            System.out.println("Archivo modificado exitosamente.");
+
+        } catch (IOException e) {
+            System.err.println("Error al modificar el archivo: " + e.getMessage());
+        }
+
+    }
 
     public Boolean getEvalProjects(String name, String subject){
         Path path = Paths.get("LD-queryGenerator","resources");
@@ -283,8 +330,6 @@ public class ConfigurationController {
         }
         return true;
     }
-
-
 
     public void createFolderProject(String name, String subject) throws IOException, InterruptedException {
 
@@ -327,11 +372,38 @@ public class ConfigurationController {
 
         System.out.print(dir_project);
 
+        modifiedProjectProperties(name,subject);
+
         File dir_act = new File(dir_home+dir_project);
         File dir_new = new File("C:/Users/norac/Desktop/aqui/workshop/Learning Dashboard/docker/node-qreval/projects/"+subject+"_"+name);
 
         boolean exito = dir_act.renameTo(dir_new);
         System.out.print(exito);
 
+    }
+
+    public void modifiedProjectProperties(String name, String subject) throws IOException {
+            System.out.print("ENTRAAA PROCESSQUERY \n");
+            String dir_home = System.getProperty("user.dir");
+            String directoryName =dir_home+"\\LD-queryGenerator\\result\\"+name;
+            String fileName = "project.properties";
+            System.out.print(directoryName);
+            System.out.print(fileName);
+
+            File queryFile = new File(directoryName+"\\" + fileName);
+            BufferedReader reader = new BufferedReader(new FileReader(queryFile));
+            StringBuilder queryContent = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                queryContent.append(line).append(System.lineSeparator());
+            }
+            reader.close();
+            String updatedQuery = queryContent.toString().replace("[PROJECT_NAME]", name);
+            updatedQuery = updatedQuery.replace("[PROJECT]", name);
+            updatedQuery= updatedQuery.replace("[SUBJECT]", subject);
+            System.out.print(updatedQuery);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(queryFile));
+            writer.write(updatedQuery);
+            writer.close();
     }
 }

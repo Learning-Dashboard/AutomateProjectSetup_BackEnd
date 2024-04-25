@@ -162,18 +162,6 @@ public class Main {
         Files.deleteIfExists(Paths.get(directoryName + "/metrics/" + fileName + "_template.properties"));
     }
 
-    /*private static void processQuery(String fileName, String directoryName, String[] users) {
-        // Implementa el procesamiento de consultas aquí
-        System.out.println("Procesando consultas para " + fileName + " en el directorio " + directoryName + " para usuarios:");
-        for (String user : users) {
-            System.out.println(user);
-        }
-    }*/
-
-    /*private static void noParamsProcessing(String fileName, String directoryName) {
-        // Implementa el procesamiento sin parámetros aquí
-        System.out.println("Procesando " + fileName + " sin parámetros en el directorio " + directoryName);
-    }*/
     public static void noParamsProcessing(String fileName, String directoryName) throws IOException {
         System.out.print("ENTRAAA noParamsProcessing \n");
         String path = directoryName + "/metrics/" + fileName;
