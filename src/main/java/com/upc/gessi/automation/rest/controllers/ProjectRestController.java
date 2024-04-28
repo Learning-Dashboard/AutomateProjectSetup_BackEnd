@@ -50,12 +50,11 @@ public class ProjectRestController {
             String URL_github = projectRequest.getURL_github();
             String URL_taiga = projectRequest.getURL_taiga();
             String URL_sheets = projectRequest.getURL_sheets();
-            String ID_github = projectRequest.getID_github();
-            String ID_taiga = projectRequest.getID_taiga();
+
 
             //System.out.print(" sdgfgfdg     "+name);
 
-            ProjectDTO pDTO = new ProjectDTO(name,subject,URL_github,URL_taiga,URL_sheets,ID_github,ID_taiga);
+            ProjectDTO pDTO = new ProjectDTO(name,subject,URL_github,URL_taiga,URL_sheets);
             projectController.createProject(pDTO);
 
         }catch (Exception e){

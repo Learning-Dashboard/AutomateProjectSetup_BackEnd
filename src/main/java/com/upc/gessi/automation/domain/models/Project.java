@@ -32,16 +32,12 @@ public class Project implements Serializable {
     @Column(name= "URL_sheets", nullable = true)
     private String URL_sheets;
 
-    @Column(name= "status")
-    private String Status;
+    @Column(name= "config_id")
+    private Integer Config_id;
 
-    @Column(name= "ID_github")
-    private String ID_github;
 
-    @Column(name= "ID_taiga")
-    private String ID_taiga;
 
-    public Project() {
+    public Project(String name, String subject, String url_github, String url_taiga, String url_sheets) {
 
     }
     public Project(String name, String subject, String URL_g, String URL_t, String URL_s,String ID_g, String ID_t){
@@ -50,17 +46,48 @@ public class Project implements Serializable {
         this.URL_github=URL_g;
         this.URL_taiga=URL_t;
         this.URL_sheets=URL_s;
-        this.ID_github=ID_g;
-        this.ID_taiga=ID_t;
+
+    }
+
+    public Project() {
+
     }
 
     public Integer getId(){
         return id;
     }
 
-    public String getID_github(){ return ID_github;}
+    public String getID_github(){
+        String[] parts = URL_github.split("/");
 
-    public String getID_taiga(){return ID_taiga;}
+        int index=-1;
+        for(int i = 0; i< parts.length; i++){
+            if(parts[i].equals("github.com")){
+                index=i;
+                break;
+            }
+        }
+        if(index != -1){
+            System.out.print(parts[index+1]);
+            return parts[index+1];
+        }
+        return null;
+    }
+
+    public String getID_taiga(){
+        String[] parts = URL_taiga.split("/");
+
+        int index=-1;
+        for(int i = 0; i< parts.length; i++){
+            if(parts[i].equals("project")){
+                index=i;
+                break;
+            }
+        }
+        if(index != -1){
+            return parts[index+1];
+        }
+        return null;}
 
     public String getName(){
         return name;

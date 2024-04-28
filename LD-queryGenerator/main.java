@@ -20,18 +20,15 @@ public class Main {
             // Crear directorio de resultados si no existe
             File resultDir = new File(RESULT_DIR);
             if (resultDir.exists()) {
+                System.out.print("plololololololololololollolololool");
                 deleteDirectory(resultDir);
             }
             resultDir.mkdirs();
 
             // Leer el archivo names.txt
             File namesFile = new File("LD-queryGenerator/resources/names.txt");
-            File currentDirectory = new File(".");
-            String absolutePath = currentDirectory.getAbsolutePath();
             if (!namesFile.exists()) {
-
-                System.out.println("A"+absolutePath);
-                System.err.println("El archivo names.txt no existe.");
+                System.err.println("El archivo names.txt no existe.oiioioioioioioioi");
                 return;
             }
 
@@ -121,9 +118,12 @@ public class Main {
     }
     public static void processQuery(String fileName, String directoryName, List<String> repoUsers) throws IOException {
         System.out.print("ENTRAAA PROCESSQUERY \n");
+        System.out.print(repoUsers);
         for (String user : repoUsers) {
             String templatePath = directoryName + "/metrics/" + fileName + "_";
+            System.out.print(templatePath+" ");
             String path = directoryName + "/metrics/" + fileName + "_" + user.replace('.', '_').replace('-', '_');
+            System.out.print(path);
 
             Files.copy(Paths.get(templatePath + "template.properties"), Paths.get(path + ".properties"), StandardCopyOption.REPLACE_EXISTING);
             Files.copy(Paths.get(templatePath + "template.query"), Paths.get(path + ".query"), StandardCopyOption.REPLACE_EXISTING);

@@ -23,11 +23,11 @@ public class ConfigurationController {
     StudentController studentController;
 
     public Integer getLastTask(String subject,String type){
-        Path path = Paths.get("C:/Users/norac/Desktop/aqui/workshop/Learning Dashboard/docker/node-qrconnect");
-        System.out.print(path);
+        Path directorioActual = Paths.get(System.getProperty("user.dir"));
+        Path path = directorioActual.getParent().resolve("docker").resolve("node-qrconnect");
         Path PathFile = path.resolve("config/"+type+"_" + subject + "/"+type+".properties");
         String pathfile = PathFile.toString();
-        System.out.println(pathfile);
+        //System.out.println(pathfile);
 
         Integer num_teams = 0;
 
@@ -52,7 +52,10 @@ public class ConfigurationController {
     }
 
     public Boolean configQR_connect_script(String name,String subject,String type){
-        Path path = Paths.get("C:/Users/norac/Desktop/aqui/workshop/Learning Dashboard/docker/node-qrconnect");
+        Path directorioActual = Paths.get(System.getProperty("user.dir"));
+        Path path = directorioActual.getParent().resolve("docker").resolve("node-qrconnect");
+        //Path path = Paths.get("docker","node-qrconnect");
+        //Path path = Paths.get("C:/Users/norac/Desktop/TFG/Learning Dashboard/docker/node-qrconnect");
         System.out.print(path);
         Path newPath = path.resolve("scripts/run."+type+"_"+subject+".sh");
         String pathi = newPath.toString();
@@ -111,7 +114,12 @@ public class ConfigurationController {
         return true;
     }
     public Boolean configQR_connect_configM(String name, String subject, String type){
-        Path path = Paths.get("C:/Users/norac/Desktop/aqui/workshop/Learning Dashboard/docker/node-qrconnect");
+        Path directorioActual = Paths.get(System.getProperty("user.dir"));
+        System.out.print(directorioActual);
+        //Path path = Paths.get("Learning Dashboard","docker","node-qrconnect");
+        Path path = directorioActual.getParent().resolve("docker").resolve("node-qrconnect");
+        //Path path = Paths.get("docker","node-qrconnect");
+        //Path path = Paths.get("C:/Users/norac/Desktop/TFG/Learning Dashboard/docker/node-qrconnect");
         System.out.print(path);
         Path newPath = path.resolve("config/"+type+"_" + subject);
         System.out.print(newPath);
@@ -178,8 +186,12 @@ public class ConfigurationController {
     }
 
     public Boolean configQR_connect_configGT(String name, String subject,String type) {
-
-        Path path = Paths.get("C:/Users/norac/Desktop/aqui/workshop/Learning Dashboard/docker/node-qrconnect");
+        Path directorioActual = Paths.get(System.getProperty("user.dir"));
+        System.out.print(directorioActual);
+        //Path path = Paths.get("Learning Dashboard","docker","node-qrconnect");
+        Path path = directorioActual.getParent().resolve("docker").resolve("node-qrconnect");
+        //Path path = Paths.get("docker","node-qrconnect");
+        //Path path = Paths.get("C:/Users/norac/Desktop/TFG/Learning Dashboard/docker/node-qrconnect");
         System.out.print(path);
         Path newPath = path.resolve("config/"+type+"_" + subject);
         System.out.print(newPath);
@@ -247,11 +259,12 @@ public class ConfigurationController {
         return true;
     }
     public void configQR_eval_script(String name, String subject){
-        Path path = Paths.get("C:/Users/norac/Desktop/aqui/workshop/Learning Dashboard/docker/node-qreval");
-        System.out.print(path);
+        Path directorioActual = Paths.get(System.getProperty("user.dir"));
+        Path path = directorioActual.getParent().resolve("docker").resolve("node-qreval");
+        //Path path = Paths.get("docker","node-qrconnect");
         Path newPath = path.resolve("scripts/run_eval_periodic.sh");
         String pathi = newPath.toString();
-        System.out.println(pathi);
+
 
         try {
             // Leer el archivo de script Bash
@@ -298,7 +311,7 @@ public class ConfigurationController {
     public Boolean getEvalProjects(String name, String subject){
         Path path = Paths.get("LD-queryGenerator","resources");
         Path newPath = path.resolve("names.txt");
-        System.out.print(newPath);
+        System.out.print("path names.txt "+newPath+"\n");
         String pathi = newPath.toString();
         //System.out.println(pathi);
 
@@ -346,7 +359,9 @@ public class ConfigurationController {
         String rutaAbsolutaScript = archivoScript.getAbsolutePath();
 
         // Combinar el comando y la ruta del script
-        String comandoCompleto = comandoPython + " " + rutaAbsolutaScript;
+        String comandoCompleto = comandoPython + " \"" + rutaAbsolutaScript+"\"";
+
+        System.out.print("comand "+comandoCompleto+"\n");
 
         // Ejecutar el comando
         Process proceso = Runtime.getRuntime().exec(comandoCompleto);
@@ -360,12 +375,19 @@ public class ConfigurationController {
             System.out.println(linea);
         }
 
+        BufferedReader error = new BufferedReader(new InputStreamReader(proceso.getErrorStream()));
+        String lineaer;
+        while ((lineaer = error.readLine()) != null) {
+            System.out.println(lineaer);
+        }
+
         // Esperar a que el proceso termine
         int resultado = proceso.waitFor();
         System.out.print(proceso.getErrorStream());
         System.out.println("El proceso terminó con código de salida: " + resultado);
 
-        String dir_home = System.getProperty("user.dir");
+        Path dir_actual = Paths.get(System.getProperty("user.dir"));
+        String dir_home = dir_actual.toString();
         System.out.print(dir_home);
 
         String dir_project ="\\LD-queryGenerator\\result\\"+name;
@@ -374,23 +396,34 @@ public class ConfigurationController {
 
         modifiedProjectProperties(name,subject);
 
-        File dir_act = new File(dir_home+dir_project);
-        File dir_new = new File("C:/Users/norac/Desktop/aqui/workshop/Learning Dashboard/docker/node-qreval/projects/"+subject+"_"+name);
+        File dir_act = new File( dir_home+dir_project);
+        System.out.print("telelelelelelele "+dir_act+"\n");
+        Path path = dir_actual.getParent().resolve("docker").resolve("node-qreval");
+        System.out.print("tele path "+path+"\n");
+        Path newPath = path.resolve("projects/" + subject + "_"+name);
+        System.out.print("telelelel new path "+newPath+"\n");
+        String pathi = newPath.toString();
+        File dir_new = new File(pathi);
+        System.out.print("kokokasadsdasdad "+dir_new);
 
         boolean exito = dir_act.renameTo(dir_new);
-        System.out.print(exito);
+        System.out.print("YEYEYEYEYEEYEY "+exito+"\n");
 
     }
 
     public void modifiedProjectProperties(String name, String subject) throws IOException {
             System.out.print("ENTRAAA PROCESSQUERY \n");
-            String dir_home = System.getProperty("user.dir");
+            Path dir_home = Paths.get(System.getProperty("user.dir"));
+            System.out.print("\nPATATATA "+dir_home+"\n");
             String directoryName =dir_home+"\\LD-queryGenerator\\result\\"+name;
+        System.out.print("\noiiioioioioio "+directoryName+"\n");
+            //Path path_all = dir_home.getParent().resolve();
             String fileName = "project.properties";
             System.out.print(directoryName);
             System.out.print(fileName);
 
             File queryFile = new File(directoryName+"\\" + fileName);
+        System.out.print("\nfsdjgfksgfkjdhsjk "+queryFile+"\n");
             BufferedReader reader = new BufferedReader(new FileReader(queryFile));
             StringBuilder queryContent = new StringBuilder();
             String line;
