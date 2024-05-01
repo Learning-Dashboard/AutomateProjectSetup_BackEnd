@@ -1,7 +1,5 @@
 package com.upc.gessi.automation.domain.controllers;
 
-import com.upc.gessi.automation.domain.models.Project;
-import org.hibernate.validator.constraints.CodePointLength;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -23,15 +21,11 @@ public class ConfigurationController {
     StudentController studentController;
 
     public Integer getLastTask(String subject,String type){
-        Path directorioActual = Paths.get(System.getProperty("user.dir"));
-        Path path = directorioActual.getParent().resolve("docker").resolve("node-qrconnect");
-        Path PathFile = path.resolve("config/"+type+"_" + subject + "/"+type+".properties");
-        String pathfile = PathFile.toString();
-        //System.out.println(pathfile);
+        String path = "home/connect/run/config/"+type+"_" + subject+"/"+type+".properties";
 
         Integer num_teams = 0;
 
-        try (BufferedReader reader= new BufferedReader(new FileReader(pathfile))) {
+        try (BufferedReader reader= new BufferedReader(new FileReader(path))) {
             String line;
 
             while ((line = reader.readLine()) != null) {
@@ -52,18 +46,19 @@ public class ConfigurationController {
     }
 
     public Boolean configQR_connect_script(String name,String subject,String type){
-        Path directorioActual = Paths.get(System.getProperty("user.dir"));
+        String path = "home/connect/run/scripts/run."+type+"_"+subject+".sh";
+        /*Path directorioActual = Paths.get(System.getProperty("user.dir"));
         Path path = directorioActual.getParent().resolve("docker").resolve("node-qrconnect");
         //Path path = Paths.get("docker","node-qrconnect");
         //Path path = Paths.get("C:/Users/norac/Desktop/TFG/Learning Dashboard/docker/node-qrconnect");
         System.out.print(path);
         Path newPath = path.resolve("scripts/run."+type+"_"+subject+".sh");
         String pathi = newPath.toString();
-        System.out.println(pathi);
+        System.out.println(pathi);*/
 
         try {
             // Leer el archivo de script Bash
-            BufferedReader reader = new BufferedReader(new FileReader(pathi));
+            BufferedReader reader = new BufferedReader(new FileReader(path));
             StringBuilder scriptContent = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
@@ -102,7 +97,7 @@ public class ConfigurationController {
             reader.close();
 
             // Escribir el archivo modificado
-            BufferedWriter writer = new BufferedWriter(new FileWriter(pathi));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(path));
             writer.write(scriptContent.toString());
             writer.close();
 
@@ -114,7 +109,8 @@ public class ConfigurationController {
         return true;
     }
     public Boolean configQR_connect_configM(String name, String subject, String type){
-        Path directorioActual = Paths.get(System.getProperty("user.dir"));
+        String path = "home/connect/run/config/"+type+"_" + subject+"/mongo.properties";
+        /*Path directorioActual = Paths.get(System.getProperty("user.dir"));
         System.out.print(directorioActual);
         //Path path = Paths.get("Learning Dashboard","docker","node-qrconnect");
         Path path = directorioActual.getParent().resolve("docker").resolve("node-qrconnect");
@@ -125,7 +121,7 @@ public class ConfigurationController {
         System.out.print(newPath);
         Path filea = newPath.resolve("mongo.properties");
         String pathi = filea.toString();
-        System.out.println(filea);
+        System.out.println(filea);*/
 
         StringBuilder contentAdd = new StringBuilder();
         String newLine = null;
@@ -136,7 +132,7 @@ public class ConfigurationController {
             newLine = "taiga_" + subject + "_" + name + ".issues, taiga_" + subject + "_" + name + ".epics, \\ \n" + "taiga_" + subject + "_" + name + ".userstories, taiga_" + subject + "_" + name + ".tasks \n";
         }
         try {
-            File file = new File(pathi);
+            File file = new File(path);
             FileReader fileReader = new FileReader(file);
             BufferedReader reader = new BufferedReader(fileReader);
 
@@ -186,7 +182,10 @@ public class ConfigurationController {
     }
 
     public Boolean configQR_connect_configGT(String name, String subject,String type) {
-        Path directorioActual = Paths.get(System.getProperty("user.dir"));
+        String path = "home/connect/run/config/"+type+"_" + subject+"/"+type+".properties";
+        System.out.print(path);
+
+        /*Path directorioActual = Paths.get(System.getProperty("user.dir"));
         System.out.print(directorioActual);
         //Path path = Paths.get("Learning Dashboard","docker","node-qrconnect");
         Path path = directorioActual.getParent().resolve("docker").resolve("node-qrconnect");
@@ -197,7 +196,7 @@ public class ConfigurationController {
         System.out.print(newPath);
         Path file = newPath.resolve(type+".properties");
         String pathi = file.toString();
-        System.out.println(file);
+        System.out.println(file);*/
 
         Integer num_task = getLastTask(subject,type);
         System.out.print(num_task);
@@ -222,11 +221,11 @@ public class ConfigurationController {
                     "tasks."+num_task+".taiga.userstory.topic=taiga_"+subject+"_"+name+".userstories\n" +
                     "tasks."+num_task+".taiga.task.topic=taiga_"+subject+"_"+name+".tasks\n";
         }
-        File sourceFile = file.toFile();
+        //File sourceFile = file.toFile();
         StringBuilder contentAdd = new StringBuilder();
         Integer num_teams = 0;
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(pathi))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
             StringBuilder content = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
@@ -247,7 +246,7 @@ public class ConfigurationController {
 
             }
             content.append(newTask).append("\n");
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(pathi))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
                 writer.write(content.toString());
                 System.out.println("Nueva tarea añadida al archivo con éxito.");
             } catch (IOException e) {
@@ -259,16 +258,17 @@ public class ConfigurationController {
         return true;
     }
     public void configQR_eval_script(String name, String subject){
-        Path directorioActual = Paths.get(System.getProperty("user.dir"));
+        String path = "home/qreval/run/scripts/run_eval_periodic.sh";
+        /* directorioActual = Paths.get(System.getProperty("user.dir"));
         Path path = directorioActual.getParent().resolve("docker").resolve("node-qreval");
         //Path path = Paths.get("docker","node-qrconnect");
         Path newPath = path.resolve("scripts/run_eval_periodic.sh");
-        String pathi = newPath.toString();
+        String pathi = newPath.toString();*/
 
 
         try {
             // Leer el archivo de script Bash
-            BufferedReader reader = new BufferedReader(new FileReader(pathi));
+            BufferedReader reader = new BufferedReader(new FileReader(path));
             StringBuilder scriptContent = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
@@ -296,7 +296,7 @@ public class ConfigurationController {
             reader.close();
 
             // Escribir el archivo modificado
-            BufferedWriter writer = new BufferedWriter(new FileWriter(pathi));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(path));
             writer.write(scriptContent.toString());
             writer.close();
 
@@ -309,6 +309,7 @@ public class ConfigurationController {
     }
 
     public Boolean getEvalProjects(String name, String subject){
+
         Path path = Paths.get("LD-queryGenerator","resources");
         Path newPath = path.resolve("names.txt");
         System.out.print("path names.txt "+newPath+"\n");
@@ -398,12 +399,13 @@ public class ConfigurationController {
 
         File dir_act = new File( dir_home+dir_project);
         System.out.print("telelelelelelele "+dir_act+"\n");
-        Path path = dir_actual.getParent().resolve("docker").resolve("node-qreval");
+        String path = "home/qreval/run/projects";
+        /*Path path = dir_actual.getParent().resolve("docker").resolve("node-qreval");
         System.out.print("tele path "+path+"\n");
         Path newPath = path.resolve("projects/" + subject + "_"+name);
         System.out.print("telelelel new path "+newPath+"\n");
-        String pathi = newPath.toString();
-        File dir_new = new File(pathi);
+        String pathi = newPath.toString();*/
+        File dir_new = new File(path);
         System.out.print("kokokasadsdasdad "+dir_new);
 
         boolean exito = dir_act.renameTo(dir_new);
@@ -438,5 +440,45 @@ public class ConfigurationController {
             BufferedWriter writer = new BufferedWriter(new FileWriter(queryFile));
             writer.write(updatedQuery);
             writer.close();
+    }
+
+    public void configureEval(String name, String subject) throws IOException, InterruptedException {
+        getEvalProjects(name, subject);
+        System.out.print("Entra EVALProject \n");
+        createFolderProject(name, subject);
+        System.out.print("Passa crearFolder \n");
+        configQR_eval_script(name, subject);
+    }
+    public Boolean initDocker(String subject,String type) throws IOException {
+        String dockerpath = "docker-compose.yml";
+        String container_name ="qrconnect_"+type+"_"+subject;
+        Runtime rt =Runtime.getRuntime();
+        Process p = rt.exec("docker inspect --format='{{.State.Running}}' "+container_name);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        String result = reader.readLine();
+        System.out.print(container_name);
+
+        if(result != null && result.equals("true")){
+
+        }
+        else{
+
+            System.out.print("entraaaaa \n");
+            Runtime rt_create =Runtime.getRuntime();
+            Process p_create = rt_create.exec("docker-compose up -d "+container_name);
+            System.out.print(p_create);
+            BufferedReader reader_create = new BufferedReader(new InputStreamReader(p_create.getInputStream()));
+            String result_create = reader_create.readLine();
+            System.out.print(result_create);
+            BufferedReader reader_error = new BufferedReader(new InputStreamReader(p_create.getErrorStream()));
+            String line;
+            while ((line = reader_create.readLine()) != null) {
+                System.out.println("stdout: " + line);
+            }
+            while ((line = reader_error.readLine()) != null) {
+                System.out.println("stderr: " + line);
+            }
+        }
+        return result != null && result.equals("true");
     }
 }

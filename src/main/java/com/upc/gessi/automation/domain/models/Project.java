@@ -37,16 +37,13 @@ public class Project implements Serializable {
 
 
 
-    public Project(String name, String subject, String url_github, String url_taiga, String url_sheets) {
 
-    }
-    public Project(String name, String subject, String URL_g, String URL_t, String URL_s,String ID_g, String ID_t){
+    public Project(String name, String subject, String URL_github, String URL_taiga, String URL_sheets){
         this.name= name;
         this.subject= subject;
-        this.URL_github=URL_g;
-        this.URL_taiga=URL_t;
-        this.URL_sheets=URL_s;
-
+        this.URL_github=URL_github;
+        this.URL_taiga=URL_taiga;
+        this.URL_sheets=URL_sheets;
     }
 
     public Project() {
@@ -55,6 +52,17 @@ public class Project implements Serializable {
 
     public Integer getId(){
         return id;
+    }
+
+    public String getURL_github(){
+        return URL_github;
+    }
+    public String getURL_taiga(){
+        return URL_taiga;
+    }
+
+    public String getURL_sheets(){
+        return URL_sheets;
     }
 
     public String getID_github(){

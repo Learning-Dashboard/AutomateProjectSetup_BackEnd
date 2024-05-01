@@ -26,7 +26,7 @@ public class StudentController {
     }
 
     public void createStudent(StudentDTO sDTO){
-        Student student = new Student(sDTO.getName(),sDTO.getIdProject(),sDTO.getUsername_github(),sDTO.getUsername_taiga(),sDTO.getUsername_sheets());
+        Student student = new Student(sDTO.getName(),sDTO.getProject(),sDTO.getUsername_github(),sDTO.getUsername_taiga(),sDTO.getUsername_sheets());
         StudentRep.save(student);
     }
 

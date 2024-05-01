@@ -18,7 +18,7 @@ public class StudentRestController {
     @Autowired
     StudentController studentcontroller;
 
-    @GetMapping(value = "/students")
+    @GetMapping(value = "/student")
     public List<String>getStudents(){
         System.out.println("AAAAAAAAAA");
         return studentcontroller.getAll();
@@ -29,14 +29,15 @@ public class StudentRestController {
     public void createStudent(StudentDTO studentRequest){
         try{
             String name = studentRequest.getName();
-            Integer Project = studentRequest.getIdProject();
+            Integer project = studentRequest.getProject();
+            System.out.print(project);
             String username_github = studentRequest.getUsername_github();
             String username_taiga = studentRequest.getUsername_taiga();
             String username_sheets = studentRequest.getUsername_sheets();
 
-            System.out.print(" sdgfgfdg     "+name+ "   "+Project);
+            //System.out.print(" sdgfgfdg     "+name+ "   "+);
 
-            StudentDTO sDTO = new StudentDTO(name,Project,username_github,username_taiga,username_sheets);
+            StudentDTO sDTO = new StudentDTO(name,project,username_github,username_taiga,username_sheets);
             studentcontroller.createStudent(sDTO);
 
         }catch (Exception e){
