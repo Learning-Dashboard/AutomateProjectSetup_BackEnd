@@ -50,9 +50,15 @@ public class StudentController {
         return taiga_usernames;
     }
 
-
-
-
-
-
+    public List<StudentDTO> getStudentsProject(Integer id_proj){
+        List<Student> students = StudentRep.findAllByProject(id_proj);
+        List<StudentDTO> stu = new ArrayList<>();
+        for(Student student : students){
+            if(student.getProject() == id_proj) {
+                StudentDTO studen = new StudentDTO(student.getName(), student.getUsername_github(), student.getUsername_taiga(), student.getUsername_sheets());
+                stu.add(studen);
+            }
+        }
+        return stu;
+    }
 }

@@ -14,7 +14,8 @@ public class Project implements Serializable {
     @SequenceGenerator(name="project_seq", sequenceName="project_id_seq", allocationSize=1)
     private Integer id;
 
-    @Column(name= "name")
+
+    @Column(name= "name", unique = true)
     private String name;
 
     @Column(name= "subject")
@@ -33,7 +34,7 @@ public class Project implements Serializable {
     private String URL_sheets;
 
     @Column(name= "config_id")
-    private Integer Config_id;
+    private Integer config_id;
 
 
 
@@ -103,6 +104,13 @@ public class Project implements Serializable {
 
     public String getSubject(){
         return subject;
+    }
+
+    public void setConfig_id(Integer num){
+        this.config_id=num;
+    }
+    public Integer getConfig_id(){
+        return config_id;
     }
 
 

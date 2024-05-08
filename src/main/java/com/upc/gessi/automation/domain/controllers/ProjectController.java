@@ -25,16 +25,12 @@ public class ProjectController {
         this.projectRep = projectRep;
     }
 
-    /*public Map<String,String> getProjects() {
-        Map<String, String> list = new HashMap<>();
-        Iterable<Project> projects = projectRep.findAll();
-        for (Project project : projects) {
-            String name = project.getName();
-            String subj = project.getSubject();
-            list.put(name, subj);
-        }
-        return list;
-    }*/
+    public ProjectDTO getProject(String name, String subject){
+        Project project = projectRep.findByNameAndSubject(name,subject);
+        ProjectDTO pDTO = new ProjectDTO(project.getId(), project.getName(),project.getSubject(),project.getURL_github(), project.getURL_taiga(), project.getURL_sheets());
+        return pDTO;
+    };
+
     public List<ProjectDTO>getProjects(){
         List<ProjectDTO> projects = new ArrayList<>();
         Iterable<Project> projectsit = projectRep.findAll();
@@ -47,10 +43,13 @@ public class ProjectController {
     }
 
     public void createProject(ProjectDTO pDTO){
-
-        Project project = new Project(pDTO.getName(),pDTO.getSubject(),pDTO.getUrlGithub(),pDTO.getUrlTaiga(),pDTO.getUrlSheets());
-        projectRep.save(project);
-
+        if(projectRep.existsByNameAndSubject(pDTO.getName(),pDTO.getSubject())){
+            System.out.print("Already exists"+pDTO.getName()+"  "+pDTO.getSubject());
+        }
+        else {
+            Project project = new Project(pDTO.getName(), pDTO.getSubject(), pDTO.getUrlGithub(), pDTO.getUrlTaiga(), pDTO.getUrlSheets());
+            projectRep.save(project);
+        }
     }
 
     public Integer getId(String name, String subject) {
@@ -66,6 +65,18 @@ public class ProjectController {
     public String getIdTaiga(String name, String subject){
         Project project = projectRep.findByNameAndSubject(name, subject);
         return project.getID_taiga();
+    }
+
+    public void setConfig(String name, String subject){
+        Project p = projectRep.findByNameAndSubject(name,subject);
+        p.setConfig_id(5);
+    }
+    public Boolean isConfig(String name, String subject){
+        Project p = projectRep.findByNameAndSubject(name,subject);
+        if(p.getConfig_id() == 5){
+            return true;
+        }
+        else return false;
     }
 
 

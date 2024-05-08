@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class Main {
     public static void main(String[] args) {
         System.out.print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        String RESULT_DIR = "LD-queryGenerator/result";
+        String RESULT_DIR = "/home/run/generator/result";
         try {
             // Crear directorio de resultados si no existe
             File resultDir = new File(RESULT_DIR);
@@ -26,7 +26,7 @@ public class Main {
             resultDir.mkdirs();
 
             // Leer el archivo names.txt
-            File namesFile = new File("LD-queryGenerator/resources/names.txt");
+            File namesFile = new File("home/run/generator/resources/names.txt");
             if (!namesFile.exists()) {
                 System.err.println("El archivo names.txt no existe.oiioioioioioioioi");
                 return;
@@ -49,7 +49,7 @@ public class Main {
                 groupDir.mkdirs();
 
                 // Copiar plantilla al directorio del grupo
-                copyDirectory(new File("LD-queryGenerator/resources/template"), groupDir);
+                copyDirectory(new File("home/run/generator/resources/template"), groupDir);
 
                 // Procesar consultas y métricas SD
                 processQuery("commits", groupDir.getAbsolutePath(), gitHubUsers);

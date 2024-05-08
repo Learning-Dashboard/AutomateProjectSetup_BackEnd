@@ -7,6 +7,3 @@ services:
       - 'POSTGRES_USER=postgres'
     ports:
       - '5434'
-  logging:
-    level:
-      org.springframework.web: DEBUG

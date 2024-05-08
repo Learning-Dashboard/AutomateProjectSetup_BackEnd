@@ -4,7 +4,7 @@ import com.upc.gessi.automation.domain.controllers.ProjectController;
 import com.upc.gessi.automation.domain.controllers.SubjectController;
 import com.upc.gessi.automation.domain.models.Subject;
 import com.upc.gessi.automation.rest.DTO.ProjectDTO;
-import java.util.logging.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +18,7 @@ import java.util.Set;
 @RestController
 @RequestMapping("/projects")
 public class ProjectRestController {
-    private static final Logger logger = Logger.getLogger(ProjectRestController.class.getName());
+
 
     @Autowired
     ProjectController projectController;
@@ -39,29 +39,30 @@ public class ProjectRestController {
     }
 
     @GetMapping(value="/id")
-    public Integer getProjectId(@RequestParam(name = "name") String name ,@RequestParam(name = "subject") String subject){
-        return projectController.getId(name,subject);
+    public ProjectDTO getProjectId(@RequestParam(name = "name") String name ,@RequestParam(name = "subject") String subject){
+        return projectController.getProject(name,subject);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createProject(@RequestBody ProjectDTO projectRequest){
+    public void createProject(@RequestBody List<ProjectDTO> projectRequests){
         System.out.print("ENTRAAA");
-        logger.info("entraaaa");
+
         try{
-            String name = projectRequest.getName();
-            String subject = projectRequest.getSubject();
-            String urlGithub = projectRequest.getUrlGithub();
-            logger.info(projectRequest.getUrlGithub());
-            String urlTaiga = projectRequest.getUrlTaiga();
-            String urlSheets = projectRequest.getUrlSheets();
+            for(ProjectDTO projectRequest: projectRequests) {
+                String name = projectRequest.getName();
+                String subject = projectRequest.getSubject();
+                String urlGithub = projectRequest.getUrlGithub();
+
+                String urlTaiga = projectRequest.getUrlTaiga();
+                String urlSheets = projectRequest.getUrlSheets();
 
 
-            System.out.print(" sdgfgfdg     "+name);
+                System.out.print(" sdgfgfdg     " + name);
 
-            ProjectDTO pDTO = new ProjectDTO(name,subject,urlGithub,urlTaiga,urlSheets);
-            projectController.createProject(pDTO);
-
+                ProjectDTO pDTO = new ProjectDTO(name, subject, urlGithub, urlTaiga, urlSheets);
+                projectController.createProject(pDTO);
+            }
         }catch (Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }

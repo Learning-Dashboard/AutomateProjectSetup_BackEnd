@@ -33,7 +33,10 @@ public class ConfigurationRestController {
             System.out.print(name);
             System.out.print(subject);
 
-            if (subjectController.getGithub(subject)) {
+            configurationController.configure_connect(name,subject);
+            configurationController.configure_qreval(name,subject);
+
+            /*if (subjectController.getGithub(subject)) {
                 configurationController.configQR_connect_configGT(name, subject, "github");
                 configurationController.configQR_connect_script(name, subject, "github");
                 configurationController.configQR_connect_configM(name, subject, "github");
@@ -47,7 +50,9 @@ public class ConfigurationRestController {
                 configurationController.configQR_connect_configGT(name, subject, "sheets");
                 configurationController.configQR_connect_script(name, subject, "sheets");
             }
-            configurationController.configureEval(name,subject);
+            configurationController.configureEval(name,subject);*/
+
+
         }
         return true;
 
@@ -72,7 +77,7 @@ public class ConfigurationRestController {
 
     }*/
     @GetMapping(value="/docker")
-    public Boolean configDocker() throws IOException {
+    public String configDocker() throws IOException {
         return configurationController.initDocker("asw","taiga");
     }
 

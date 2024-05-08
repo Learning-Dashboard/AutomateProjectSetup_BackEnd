@@ -22,6 +22,12 @@ public class StudentDTO  {
         this.username_taiga= username_taiga;
         this.username_sheets= username_sheets;
     }
+    public StudentDTO(String name, String username_github,String username_taiga,String username_sheets){
+        this.name= name;
+        this.username_github= username_github;
+        this.username_taiga= username_taiga;
+        this.username_sheets= username_sheets;
+    }
 
     public String getName(){
         return name;

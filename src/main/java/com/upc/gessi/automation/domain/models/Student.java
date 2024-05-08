@@ -53,6 +53,10 @@ public class Student implements Serializable {
         return username_taiga;
     }
 
+    public String getUsername_sheets(){
+        return username_sheets;
+    }
+
     public Integer getProject() {
         return project;
     }

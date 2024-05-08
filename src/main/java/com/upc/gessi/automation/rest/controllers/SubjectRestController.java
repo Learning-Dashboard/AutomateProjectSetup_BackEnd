@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/subject")
 public class SubjectRestController {
@@ -14,8 +16,12 @@ public class SubjectRestController {
     @Autowired
     SubjectController subjectController;
     
-    @GetMapping
+    @GetMapping(value="/token")
     public String getToken(@RequestParam(name = "name") String name){
         return subjectController.getTokenGit(name);
+    }
+    @GetMapping
+    public List<String> getSubjects(){
+        return subjectController.getSubjects();
     }
 }
