@@ -17,4 +17,41 @@ public class Metric {
     @Column(name="name")
     private String name;
 
+    @Column(name="factor")
+    private String factor;
+
+    @Column(name="project")
+    private String project;
+
+
+    public Metric(Integer externalid, String name, String project) {
+        this.externalid = externalid;
+        this.name = name;
+        this.project = project;
+    }
+
+    public void setFactor(String factor){
+        System.out.print("WWWWWWWWW");
+        this.factor = factor;
+    }
+
+    public String getFactor(){
+        return factor;
+    }
+
+    public Integer getExternalid(){
+        return externalid;
+    }
+
+    public String getProject(){
+        return project;
+    }
+
+    public String getName(){
+        return name;
+    }
+
+    public Metric() {
+
+    }
 }

@@ -109,6 +109,8 @@ public class Project implements Serializable {
     public void setConfig_id(Integer num){
         this.config_id=num;
     }
+
+    public void setNum_students(Integer num){this.num_students=num;}
     public Integer getConfig_id(){
         return config_id;
     }

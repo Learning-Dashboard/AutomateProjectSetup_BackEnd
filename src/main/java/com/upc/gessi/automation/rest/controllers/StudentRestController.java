@@ -50,6 +50,8 @@ public class StudentRestController {
             System.out.print(id_project);
 
             for(Map<String,String> memberData: members){
+                System.out.print(members.size());
+                projectController.setNumStudents(members.size()+1,name,subject);
                 StudentDTO student = new StudentDTO(memberData.get("name"),id_project,memberData.get("githubUsername"),memberData.get("taigaUsername"),null);
                 studentcontroller.createStudent(student);
             }

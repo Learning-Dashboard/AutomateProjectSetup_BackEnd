@@ -71,6 +71,12 @@ public class ProjectController {
         Project p = projectRep.findByNameAndSubject(name,subject);
         p.setConfig_id(5);
     }
+
+    public void setNumStudents(Integer num,String name, String subject){
+        Project p = projectRep.findByNameAndSubject(name,subject);
+        p.setNum_students(num);
+        projectRep.save(p);
+    }
     public Boolean isConfig(String name, String subject){
         Project p = projectRep.findByNameAndSubject(name,subject);
         if(p.getConfig_id() == 5){
