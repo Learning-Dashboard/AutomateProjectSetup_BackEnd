@@ -1,0 +1,418 @@
+version: '2.1'
+
+services:
+
+  db:
+    build:
+      context: docker/node-postgres/
+      args:
+        - DB_USER
+        - DB_NAME
+        - DB_PASSWORD
+        - DB_LOCALE        
+    container_name: qrapids_postgres
+    environment:
+    - DB_USER
+    - DB_PASSWORD
+    - DB_LOCALE
+    - POSTGRES_HOST_AUTH_METHOD=trust
+    ports:
+    - "${DB_PORT}:5432"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "2"
+    volumes:
+    - ${COMPOSE_PROJECT_HOME}/www/db/backup:/home/postgres/backup
+    - postgresql:/var/lib/postgresql/data
+    networks: 
+    - qrapids
+    restart: always
+
+  configuration:
+    container_name: configuration_backend
+    build:
+      context: automation
+    environment:
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: secret
+      DATABASE_URL: jdbc:postgresql://tfg_db:5434/postgres
+    ports:
+      - "8092:8092"
+    depends_on:
+      - tfg_db
+    volumes:
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/config:/home/connect/run/config
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/scripts:/home/connect/run/scripts
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qreval/scripts:/home/qreval/run/scripts
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qreval/projects:/home/qreval/run/projects
+    - ${COMPOSE_PROJECT_HOME}/docker/node-configuration/LD-queryGenerator:/home/run/generator
+    - ./Learning Dashboard:/home/run
+
+
+  tfg_db:
+    build:
+      context: docker/node-dbconfig/
+      args:
+        - DB_USER_2
+        - DB_NAME_2
+        - DB_PASSWORD_2
+        - DB_LOCALE_2  
+    container_name: configuration_db
+    ports:
+      - "5434:5434"
+    environment:
+      - DB_USER_2
+      - DB_PASSWORD_2
+      - DB_LOCALE_2  
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    
+  rbase:
+    build:
+      context: docker/node-rbase
+    container_name: qrapids_rbase
+    ports:
+    - "${RB_PORT}:6311"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "2"
+    networks: 
+    - qrapids
+    volumes:
+    - ${COMPOSE_PROJECT_HOME}/docker/node-rbase:/home/ruser
+
+  mongodb:
+    build:
+      context: docker/node-mongodb/
+    container_name: ingest_mongodb
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --eval 'db.runCommand({ connectionStatus: 1 }).ok'"]
+      interval: 30s
+      timeout: 30s
+      retries: 10
+    volumes:
+    - ${COMPOSE_PROJECT_HOME}/docker/node-mongodb/data:/data/db
+    - ${COMPOSE_PROJECT_HOME}/docker/node-mongodb/config/mongod.conf:/etc/mongod.conf
+    ports:
+    - "${MONGO_PORT}:27017"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+        max-file: "2"
+    environment:
+    - MONGO_INITDB_DATABASE=MongoDB
+    networks:
+    - qrapids
+
+  tomcat:
+    build:
+      context: docker/node-tomcat
+    container_name: qrapids_tomcat
+    environment:
+    - QRAPIDS_CONFIG_DIR
+    - QRAPIDS_DATA_DIR
+    - spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+    - spring.jpa.database=POSTGRESQL
+    - spring.jpa.show-sql=false
+    - spring.jmx.enabled=false
+    - server.port=8080
+    - server.url=http://localhost:${WEB_PORT}
+    # Local connection
+    - spring.datasource.driver-class-name=org.postgresql.Driver
+    - spring.datasource.platform=postgres
+    - spring.datasource.url=jdbc:postgresql://db:5432/postgres
+    - spring.datasource.username=postgres
+    - spring.datasource.password=example
+    # QMA (Quality Model Assessment), connection to the MongoDB database
+    - qma.ip=mongodb
+    - qma.port=27017
+    - qma.database.name=mongo
+    - qma.username=
+    - qma.password=
+    # Endpoints
+    - pabre.url=http://gessi3.cs.upc.edu/pabre-ws
+    - assessSI.url=http://tomcat:8080/LD-si_assessment-rest-0.1
+    - backlog.milestones.url=
+    - backlog.newIssue.url=
+    - backlog.phases.url=
+    # Help menu links
+    - help.userguide=https://github.com/Learning-Dashboard/LD-learning-dashboard/wiki/User-Guide
+    - help.support=https://github.com/Learning-Dashboard/Bug-Reporting
+    - about.custom.text=Q-Rapids Docker Solution
+    - fakeData=false
+    - demoMode=false
+    # Security Shield
+    - security.enable=true
+    - security.api.enable=true  
+    # Anonymization encryption method
+    - database.encryption.key=ntw9tA8jwVjAyNMDVIQ4dEAOy87tHRnp
+    - database.encryption.initvector=e37ec2589341eb09
+    - database.encryption.algorithm=AES/CBC/PKCS5PADDING
+    # Forecast
+    - forecast.technique=PROPHET
+    - forecast.url=http://tomcat:8080/LD-forecast-rest-0.5
+    - forecast.ip=mongodb
+    - forecast.port=27017
+    - forecast.database=mongo
+    - forecast.username=
+    - forecast.password=
+    # Rserve
+    - Rserve.host=rbase
+    - Rserve.port=6311
+    - Rscripts.location=/home/ruser/TimeSeriesFunctions_GPL_0.6.R
+    # Scheduled task config
+    - cron.expression=
+    - projects.dir=
+    # JasperServer connection
+    - jasperServer.url=
+    - jasperserver.user=
+    - jasperserver.password=
+    ports:
+    - "${WEB_PORT}:8080"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1g"
+        max-file: "2"
+    links:
+    - db
+    external_links:
+    - mongodb
+    - rbase
+    volumes:
+    - ${COMPOSE_PROJECT_HOME}/www/api/log:/usr/local/tomcat/logs
+    - ${COMPOSE_PROJECT_HOME}/www/api/public:/usr/local/tomcat/webapps
+    - ${COMPOSE_PROJECT_HOME}/www/api/config:${QRAPIDS_CONFIG_DIR}
+    - ${COMPOSE_PROJECT_HOME}/www/api/data:${QRAPIDS_DATA_DIR}
+    - ${COMPOSE_PROJECT_HOME}/docker/node-tomcat/setenv.sh:/usr/local/tomcat/bin/setenv.sh:ro
+    - ${COMPOSE_PROJECT_HOME}/www/api/pabreDatabase:/home/pabre-db
+    networks:
+    - qrapids
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:6.2.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200m"
+        max-file: "2"
+    networks:
+    - qrapids
+
+  kafka:
+    image: confluentinc/cp-kafka:6.2.0
+    container_name: kafka
+    ports:
+    - "${KAFKA_PORT}:9092"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200m"
+        max-file: "2"
+    networks: 
+    - qrapids
+    depends_on:
+    - zookeeper
+    - mongodb
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  # Connectors PES
+
+  qrconnect_github_pes:
+    build:
+      context: docker/node-qrconnect/
+    container_name: qrconnect_github_pes
+    depends_on:
+    - mongodb
+    - zookeeper
+    - kafka
+    networks:
+    - qrapids
+    entrypoint: "/bin/bash"
+    command: "./scripts/run.github_pes.sh"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1g"
+        max-file: "2"
+    volumes:
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/config:/home/run/config
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/jar:/home/run/jar
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/scripts:/home/run/scripts
+
+  qrconnect_taiga_pes:
+    build:
+      context: docker/node-qrconnect/
+    container_name: qrconnect_taiga_pes
+    depends_on:
+    - mongodb
+    - zookeeper
+    - kafka
+    networks:
+    - qrapids
+    entrypoint: "/bin/bash"
+    command: "./scripts/run.taiga_pes.sh"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1g"
+        max-file: "2"
+    volumes:
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/config:/home/run/config
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/jar:/home/run/jar
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/scripts:/home/run/scripts
+
+  qrconnect_sheets_pes:
+    build:
+      context: docker/node-qrconnect/
+    container_name: qrconnect_sheets_pes
+    depends_on:
+    - mongodb
+    - zookeeper
+    - kafka
+    networks:
+    - qrapids
+    entrypoint: "/bin/bash"
+    command: "./scripts/run.sheets_pes.sh"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1g"
+        max-file: "2"
+    volumes:
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/config:/home/run/config
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/jar:/home/run/jar
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/scripts:/home/run/scripts
+
+  # Connectors ASW
+
+  qrconnect_github_asw:
+    build:
+      context: docker/node-qrconnect/
+    container_name: qrconnect_github_asw
+    depends_on:
+    - mongodb
+    - zookeeper
+    - kafka
+    networks:
+    - qrapids
+    entrypoint: "/bin/bash"
+    command: "./scripts/run.github_asw.sh"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1g"
+        max-file: "2"
+    volumes:
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/config:/home/run/config
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/jar:/home/run/jar
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/scripts:/home/run/scripts
+
+  qrconnect_taiga_asw:
+    build:
+      context: docker/node-qrconnect/
+    container_name: qrconnect_taiga_asw
+    depends_on:
+    - mongodb
+    - zookeeper
+    - kafka
+    networks:
+    - qrapids
+    entrypoint: "/bin/bash"
+    command: "./scripts/run.taiga_asw.sh"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1g"
+        max-file: "2"
+    volumes:
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/config:/home/run/config
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/jar:/home/run/jar
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/scripts:/home/run/scripts
+
+# Connectors AMEP
+
+  qrconnect_github_amep:
+    build:
+      context: docker/node-qrconnect/
+    container_name: qrconnect_github_amep
+    depends_on:
+    - mongodb
+    - zookeeper
+    - kafka
+    networks:
+    - qrapids
+    entrypoint: "/bin/bash"
+    command: "./scripts/run.github_amep.sh"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1g"
+        max-file: "2"
+    volumes:
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/config:/home/run/config
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/jar:/home/run/jar
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/scripts:/home/run/scripts
+
+  qrconnect_taiga_amep:
+    build:
+      context: docker/node-qrconnect/
+    container_name: qrconnect_taiga_amep
+    depends_on:
+    - mongodb
+    - zookeeper
+    - kafka
+    networks:
+    - qrapids
+    entrypoint: "/bin/bash"
+    command: "./scripts/run.taiga_amep.sh"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1g"
+        max-file: "2"
+    volumes:
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/config:/home/run/config
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/jar:/home/run/jar
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/scripts:/home/run/scripts
+
+  qreval:
+    build:
+      context: docker/node-qreval
+    container_name: qrapids-qreval
+    depends_on:  
+    - mongodb
+    environment:
+    - dashboard.notification.url=http://tomcat:8080/api/strategicIndicators/assess
+    networks:
+    - qrapids 
+    entrypoint: "/bin/bash"
+    command: "./scripts/run_eval_periodic.sh"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1g"
+        max-file: "2"
+    volumes:
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qreval/jar:/home/run/jar
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qreval/scripts:/home/run/scripts
+    - ${COMPOSE_PROJECT_HOME}/docker/node-qreval/projects:/home/run/projects
+  
+networks:
+  qrapids:
+    driver: bridge
+volumes:
+  postgresql:
+    

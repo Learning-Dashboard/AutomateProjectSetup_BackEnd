@@ -7,7 +7,7 @@ public class StudentDTO  {
 
     private Integer id;
     private String name;
-    private Integer id_project;
+    private Integer project;
     private String username_github;
     private String username_taiga;
     private String username_sheets;
@@ -15,9 +15,15 @@ public class StudentDTO  {
     @Autowired
     private StudentRepository StudentRep;
 
-    public StudentDTO(String name, Integer id_project, String username_github,String username_taiga,String username_sheets){
+    public StudentDTO(String name, Integer project, String username_github,String username_taiga,String username_sheets){
         this.name= name;
-        this.id_project= id_project;
+        this.project= project;
+        this.username_github= username_github;
+        this.username_taiga= username_taiga;
+        this.username_sheets= username_sheets;
+    }
+    public StudentDTO(String name, String username_github,String username_taiga,String username_sheets){
+        this.name= name;
         this.username_github= username_github;
         this.username_taiga= username_taiga;
         this.username_sheets= username_sheets;
@@ -27,8 +33,8 @@ public class StudentDTO  {
         return name;
     }
 
-    public Integer getIdProject(){
-        return id_project;
+    public Integer getProject(){
+        return project;
     }
 
     public String getUsername_github(){

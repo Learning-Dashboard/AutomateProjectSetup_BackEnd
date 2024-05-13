@@ -27,6 +27,10 @@ public class Subject implements Serializable {
     @Column(name = "te_sheets")
     private Boolean sheets;
 
+    public String getName() {
+        return name;
+    }
+
     public String getToken(){
         return token_github;
     }

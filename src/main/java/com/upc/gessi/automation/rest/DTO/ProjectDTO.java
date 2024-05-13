@@ -6,24 +6,34 @@ public class ProjectDTO {
     private String name;
     private String subject;
     private Integer num_students;
-    private String URL_github;
-    private String URL_taiga;
-    private String URL_sheets;
+    private String urlGithub;
+    private String urlTaiga;
+    private String urlSheets;
 
-    private String status;
-    private String ID_github;
-    private String ID_taiga;
+    private String config_id;
 
-    public ProjectDTO(String name, String subject, String URL_github, String URL_taiga, String URL_sheets, String ID_github, String ID_taiga){
+    public ProjectDTO(){};
+
+
+    public ProjectDTO(String name, String subject, String urlGithub, String urlTaiga, String urlSheets){
         this.name=name;
         this.subject=subject;
-        this.URL_github=URL_github;
-        this.URL_taiga=URL_taiga;
-        this.URL_sheets=URL_sheets;
-        this.ID_github=ID_github;
-        this.ID_taiga=ID_taiga;
+        this.urlGithub=urlGithub;
+        this.urlTaiga=urlTaiga;
+        this.urlSheets=urlSheets;
+    }
+    public ProjectDTO(Integer Id,String name, String subject, String urlGithub, String urlTaiga, String urlSheets){
+        this.Id=Id;
+        this.name=name;
+        this.subject=subject;
+        this.urlGithub=urlGithub;
+        this.urlTaiga=urlTaiga;
+        this.urlSheets=urlSheets;
     }
 
+    public Integer getId(){
+        return Id;
+    }
     public String getName(){
         return name;
     }
@@ -32,20 +42,17 @@ public class ProjectDTO {
         return subject;
     }
 
-    public String getURL_github(){
-        return URL_github;
+    public String getUrlGithub(){
+        return urlGithub;
     }
 
-    public String getURL_taiga(){
-        return URL_taiga;
+    public String getUrlTaiga(){
+        return urlTaiga;
     }
 
-    public String getURL_sheets(){
-        return URL_sheets;
+    public String getUrlSheets(){
+        return urlSheets;
     }
 
-    public String getID_github(){return ID_github;}
-
-    public String getID_taiga(){return ID_taiga;}
 
 }

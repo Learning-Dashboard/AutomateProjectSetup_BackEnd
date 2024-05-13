@@ -14,7 +14,8 @@ public class Project implements Serializable {
     @SequenceGenerator(name="project_seq", sequenceName="project_id_seq", allocationSize=1)
     private Integer id;
 
-    @Column(name= "name")
+
+    @Column(name= "name", unique = true)
     private String name;
 
     @Column(name= "subject")
@@ -32,35 +33,70 @@ public class Project implements Serializable {
     @Column(name= "URL_sheets", nullable = true)
     private String URL_sheets;
 
-    @Column(name= "status")
-    private String Status;
+    @Column(name= "config_id")
+    private Integer config_id;
 
-    @Column(name= "ID_github")
-    private String ID_github;
 
-    @Column(name= "ID_taiga")
-    private String ID_taiga;
+
+
+    public Project(String name, String subject, String URL_github, String URL_taiga, String URL_sheets){
+        this.name= name;
+        this.subject= subject;
+        this.URL_github=URL_github;
+        this.URL_taiga=URL_taiga;
+        this.URL_sheets=URL_sheets;
+    }
 
     public Project() {
 
-    }
-    public Project(String name, String subject, String URL_g, String URL_t, String URL_s,String ID_g, String ID_t){
-        this.name= name;
-        this.subject= subject;
-        this.URL_github=URL_g;
-        this.URL_taiga=URL_t;
-        this.URL_sheets=URL_s;
-        this.ID_github=ID_g;
-        this.ID_taiga=ID_t;
     }
 
     public Integer getId(){
         return id;
     }
 
-    public String getID_github(){ return ID_github;}
+    public String getURL_github(){
+        return URL_github;
+    }
+    public String getURL_taiga(){
+        return URL_taiga;
+    }
 
-    public String getID_taiga(){return ID_taiga;}
+    public String getURL_sheets(){
+        return URL_sheets;
+    }
+
+    public String getID_github(){
+        String[] parts = URL_github.split("/");
+
+        int index=-1;
+        for(int i = 0; i< parts.length; i++){
+            if(parts[i].equals("github.com")){
+                index=i;
+                break;
+            }
+        }
+        if(index != -1){
+            System.out.print(parts[index+1]);
+            return parts[index+1];
+        }
+        return null;
+    }
+
+    public String getID_taiga(){
+        String[] parts = URL_taiga.split("/");
+
+        int index=-1;
+        for(int i = 0; i< parts.length; i++){
+            if(parts[i].equals("project")){
+                index=i;
+                break;
+            }
+        }
+        if(index != -1){
+            return parts[index+1];
+        }
+        return null;}
 
     public String getName(){
         return name;
@@ -68,6 +104,15 @@ public class Project implements Serializable {
 
     public String getSubject(){
         return subject;
+    }
+
+    public void setConfig_id(Integer num){
+        this.config_id=num;
+    }
+
+    public void setNum_students(Integer num){this.num_students=num;}
+    public Integer getConfig_id(){
+        return config_id;
     }
 
 

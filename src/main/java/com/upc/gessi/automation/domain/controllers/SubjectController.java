@@ -5,6 +5,7 @@ import com.upc.gessi.automation.domain.respositories.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -12,6 +13,15 @@ public class SubjectController {
 
     @Autowired
     private SubjectRepository subjectRepository;
+
+    public List<String> getSubjects(){
+        List<String> subjects_names = new ArrayList<>();
+        Iterable<Subject> subjects =  subjectRepository.findAll();
+        for(Subject sub: subjects){
+            subjects_names.add(sub.getName());
+        }
+        return subjects_names;
+    }
 
     public String getTokenGit(String name){
         Subject sub = subjectRepository.findByName(name);

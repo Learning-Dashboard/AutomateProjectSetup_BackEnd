@@ -26,13 +26,39 @@ public class StudentController {
     }
 
     public void createStudent(StudentDTO sDTO){
-        Student student = new Student(sDTO.getName(),sDTO.getIdProject(),sDTO.getUsername_github(),sDTO.getUsername_taiga(),sDTO.getUsername_sheets());
+        Student student = new Student(sDTO.getName(),sDTO.getProject(),sDTO.getUsername_github(),sDTO.getUsername_taiga(),sDTO.getUsername_sheets());
         StudentRep.save(student);
     }
 
+    public ArrayList<String> getStudentsGithubProject(Integer id_proj){
+        List<Student> students = StudentRep.findAllByProject(id_proj);
+        ArrayList<String> github_usernames = new ArrayList<>();
+        for(Student student : students){
+            System.out.print(student.getUsername_github());
+            github_usernames.add(student.getUsername_github());
+        }
+        return github_usernames;
+    }
 
+    public ArrayList<String> getStudentsTaigaProject(Integer id_proj){
+        List<Student> students = StudentRep.findAllByProject(id_proj);
+        ArrayList<String> taiga_usernames = new ArrayList<>();
+        for(Student student : students){
+            System.out.print(student.getUsername_taiga());
+            taiga_usernames.add(student.getUsername_taiga());
+        }
+        return taiga_usernames;
+    }
 
-
-
-
+    public List<StudentDTO> getStudentsProject(Integer id_proj){
+        List<Student> students = StudentRep.findAllByProject(id_proj);
+        List<StudentDTO> stu = new ArrayList<>();
+        for(Student student : students){
+            if(student.getProject() == id_proj) {
+                StudentDTO studen = new StudentDTO(student.getName(), student.getUsername_github(), student.getUsername_taiga(), student.getUsername_sheets());
+                stu.add(studen);
+            }
+        }
+        return stu;
+    }
 }
