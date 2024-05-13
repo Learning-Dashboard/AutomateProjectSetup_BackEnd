@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.http.HttpClient;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -196,8 +197,68 @@ public class MetricController {
     }
 
     public void createMetricCategory(String category){
-        if(category == "NoCategory"){
+        OkHttpClient client = new OkHttpClient();
+        HttpClient httpClient = HttpClient.newHttpClient();
+        Gson gson = new Gson();
+        RequestBody requestBody = null;
+        String[] upperThreshold ={};
+        String[] color ={};
+        String[] type={};
 
+        if(category == "Default"){
+            upperThreshold = new String[]{"100", "67", "33"};
+            color = new String[]{"#00ff00", "#ff8000", "#ff0000"};
+            type= new String[]{"Good", "Neutral", "Bad"};
         }
+        else if(category == "NoCategory"){
+            upperThreshold = new String[]{"100", "0", "0"};
+            color = new String[]{"#9eacd6", "#ff8000", "#ff0000"};
+            type= new String[]{"Neutral", "Neutral", "Bad"};
+        }
+        else if(category.contains("members contribution")){
+            if(category.contains("4")){
+                upperThreshold = new String[]{"100", "40", "30","20","10"};
+            } else if (category.contains("5")) {
+                upperThreshold = new String[]{"100", "35", "25","15","5"};
+            } else if (category.contains("3")) {
+                upperThreshold = new String[]{"100", "48", "38","28","10"};
+            } else if (category.contains("6")) {
+                upperThreshold = new String[]{"100", "30", "20","10","5"};
+            } else if (category.contains("7")) {
+                upperThreshold = new String[]{"100", "32", "22","12","7"};
+            } else if (category.contains("8")) {
+                upperThreshold = new String[]{"100", "30", "20","10","6"};
+            }
+            color = new String[]{"#ff0000", "#ff8000", "#00ff00","#ff8000", "#ff0000"};
+            type= new String[]{"High", "Up", "Well","Down","Low"};
+        }
+        List<JsonObject> jsonArray = new ArrayList<>();
+
+        for(int i = 0; i<upperThreshold.length; i++){
+            JsonObject obj = new JsonObject();
+            obj.addProperty("upperThreshold",upperThreshold[i]);
+            obj.addProperty("color",color[i]);
+            obj.addProperty("type",type[i]);
+            jsonArray.add(obj);
+        }
+
+        String requestBodyJson = gson.toJson(jsonArray);
+        requestBody = RequestBody.create(MediaType.parse("application/json"),requestBodyJson);
+        try{
+            Request putCategory = new Request.Builder()
+                    .url(new URL("http://host.docker.internal:8888/api/metrics/categories?name="+category))
+                    //.addHeader("Accept","application/json")
+                    .addHeader("Accept", "*/*")
+                    .put(requestBody)
+                    .build();
+
+            Response putResponse = client.newCall(putCategory).execute();
+            System.out.println(putResponse.body().string());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

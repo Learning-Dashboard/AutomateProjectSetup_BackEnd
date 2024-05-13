@@ -27,6 +27,11 @@ public class MetricRestController {
         metricController.addCategoryMetric("bravo11",4);
     }
 
+    @GetMapping(value="/CA")
+    public void adCat(){
+        metricController.createMetricCategory("Default");
+    }
+
     @GetMapping
     public String getMetrics(@RequestParam(name = "name") String name) throws IOException, InterruptedException, URISyntaxException {
         OkHttpClient client = new OkHttpClient();
