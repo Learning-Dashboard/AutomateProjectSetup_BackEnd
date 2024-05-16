@@ -39,38 +39,7 @@ public class MetricRestController {
         Gson gson = new Gson();
 
     try {
-        /*Request getRequest = new Request.Builder()
-                .url(new URL("http://host.docker.internal:8888/api/metrics?prj="+name))
-                .build();
 
-        Response getResponse = client.newCall(getRequest).execute();
-        //HttpResponse<String> getResponse = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
-        if (getResponse.isSuccessful() ) {
-            System.out.print("AAAAAAAAAA");
-            ResponseBody data = getResponse.body();
-            System.out.print(data);
-            if(data !=null) {
-                String dataString = data.string();
-                System.out.println(dataString);
-                JsonArray json = JsonParser.parseString(dataString).getAsJsonArray();
-                for(int i= 0;i<json.size(); i++){
-                    JsonObject element = json.get(i).getAsJsonObject();
-                    Integer externalid = element.get("id").getAsInt();
-                    System.out.print(externalid);
-                    String metric_name = element.get("externalId").getAsString();
-                    System.out.print(metric_name);
-                    //String factor = element.get("categoryName").getAsString();
-                    //System.out.print(factor);
-
-                    JsonObject object = element.getAsJsonObject("project");
-
-                    String project = object.get("name").getAsString();
-                    metricController.createMetric(externalid,metric_name,project);
-                }
-            }
-        } else {
-            System.out.print("AAAAAAAAAAAAAAAAAA");
-        }*/
         Request getRequestFactor = new Request.Builder()
                 .url(new URL("http://host.docker.internal:8888/api/metrics/current?prj="+name))
                 .build();

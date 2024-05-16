@@ -140,7 +140,7 @@ public class MetricController {
         else if(category == "NoCategory"){
             upperThreshold = new String[]{"100", "0", "0"};
             color = new String[]{"#9eacd6", "#ff8000", "#ff0000"};
-            type= new String[]{"Neutral", "Neutral", "Bad"};
+            type= new String[]{"Neutral", "Low", "Bad"};
         }
         else if(category.contains("members contribution")){
             if(category.contains("4")){
