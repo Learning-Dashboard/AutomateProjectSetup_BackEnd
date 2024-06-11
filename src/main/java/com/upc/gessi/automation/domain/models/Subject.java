@@ -27,14 +27,23 @@ public class Subject implements Serializable {
     @Column(name = "te_sheets")
     private Boolean sheets;
 
+    public Subject() {
+
+    }
+    public Subject(String name, Boolean github, String token, Boolean taiga, Boolean sheets){
+        this.name = name;
+        this.github = github;
+        this.token_github= token;
+        this.taiga = taiga;
+        this.sheets = sheets;
+    }
+
     public String getName() {
         return name;
     }
-
-    public String getToken(){
+    public String getTokenGithub(){
         return token_github;
     }
-
     public Boolean getTaiga(){
         return taiga;
     }
@@ -44,5 +53,6 @@ public class Subject implements Serializable {
     public Boolean getSheets(){
         return sheets;
     }
+
 
 }

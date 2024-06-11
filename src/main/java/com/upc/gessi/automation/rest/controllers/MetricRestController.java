@@ -1,39 +1,55 @@
 package com.upc.gessi.automation.rest.controllers;
 
 import com.upc.gessi.automation.domain.controllers.MetricController;
-import okhttp3.*;
-import com.google.gson.*;
-
-
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
+//import okhttp3.RequestBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.http.HttpClient;
+import java.util.List;
 
 @RestController
-@RequestMapping("/metric")
+@RequestMapping("/metrics")
 public class MetricRestController {
 
     @Autowired
     MetricController metricController;
 
-    @GetMapping(value="/categ")
-    public void putCateg(){
-        metricController.addCategoryMetric("bravo11",4);
+    @PostMapping(value="/category")
+    public void putCategory(@RequestParam(name = "project")String project){
+        metricController.addCategoryMetric(project);
     }
 
-    @GetMapping(value="/CA")
-    public void adCat(){
+    /*@GetMapping(value="/stu")
+    public List<Integer> getMet(){
+        return metricController.getMetricStudents("bravo11","annaamc","annaamc","");
+    }*/
+
+    /*@GetMapping(value="/CA")
+    public void newCategory(){
         metricController.createMetricCategory("Default");
+    }*/
+
+
+
+    @PostMapping
+    public void configLD(@RequestBody List<String> projects){
+        for(String p : projects) {
+            System.out.println(p);
+        }
+            /*System.out.print("ADD_METRICS");
+            metricController.addMetrics(p);
+            System.out.print("SET_FACTOR");
+            metricController.setFactorMetric(p);
+            System.out.print("ADD_CATEGORY_METRIC");
+            metricController.addCategoryMetric(p);
+            System.out.print("AAADAKJDKHDKDJHjhg");*/
     }
 
-    @GetMapping
-    public String getMetrics(@RequestParam(name = "name") String name) throws IOException, InterruptedException, URISyntaxException {
+
+    /*@PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public String createMetrics(@RequestParam(name = "name") String name) throws IOException, InterruptedException, URISyntaxException {
+        metricController.addMetrics(name);
         OkHttpClient client = new OkHttpClient();
         HttpClient httpClient = HttpClient.newHttpClient();
         Gson gson = new Gson();
@@ -64,7 +80,7 @@ public class MetricRestController {
                     String factor = qualityFactorsArray.get(0).getAsString();
                     System.out.print(factor);
                     System.out.print("\n"+ externalid+"  "+factor+"\n");
-                    metricController.setFactorMetric(externalid,factor);
+                    //metricController.setFactorMetric(externalid,factor,name);
                 }
             }
         } else {
@@ -74,5 +90,5 @@ public class MetricRestController {
         e.printStackTrace();
     }
         return "patata";
-    };
+    };*/
 }

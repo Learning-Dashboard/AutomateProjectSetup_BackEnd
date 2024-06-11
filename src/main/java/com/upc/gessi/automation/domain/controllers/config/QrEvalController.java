@@ -19,19 +19,19 @@ public class QrEvalController {
             StringBuilder scriptContent = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
-                if (line.contains("FACTORS_COLLECTION_NAME=(")) {
+                if (line.contains("FACTORS_COLLECTION_NAME=(") && !line.contains(subject+"_"+name)) {
                     int endIndex = line.indexOf(')');
                     if (endIndex != -1) {
                         line = line.substring(0, endIndex) +" , "+ " \"" + "factors."+name + "\"" + line.substring(endIndex);
                     }
                 }
-                if(line.contains("STRATEGIC_INDICATORS_COLLECTION_NAME=(")){
+                if(line.contains("STRATEGIC_INDICATORS_COLLECTION_NAME=(") && !line.contains(subject+"_"+name)){
                     int endIndex = line.indexOf(')');
                     if (endIndex != -1) {
                         line = line.substring(0, endIndex) +" , "+ " \"" + "strategic_indicators."+name + "\"" + line.substring(endIndex);
                     }
                 }
-                if (line.contains("RELATIONS_COLLECTION_NAME=(")) {
+                if (line.contains("RELATIONS_COLLECTION_NAME=(") && !line.contains(subject+"_"+name)) {
                     int endIndex = line.indexOf(')');
                     if (endIndex != -1) {
                         line = line.substring(0, endIndex) +" , "+ " \"" + "relations."+name+ "\"" + line.substring(endIndex);

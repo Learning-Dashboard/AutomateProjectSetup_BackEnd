@@ -34,7 +34,7 @@ public class ProjectRestController {
     private static final String URL_SHEETS = "URL_sheets";
 
     @GetMapping
-    public List<ProjectDTO> getProjects(){
+    public List<ProjectDTO> getAll(){
         return projectController.getProjects();
     }
 
@@ -56,9 +56,6 @@ public class ProjectRestController {
 
                 String urlTaiga = projectRequest.getUrlTaiga();
                 String urlSheets = projectRequest.getUrlSheets();
-
-
-                System.out.print(" sdgfgfdg     " + name);
 
                 ProjectDTO pDTO = new ProjectDTO(name, subject, urlGithub, urlTaiga, urlSheets);
                 projectController.createProject(pDTO);
