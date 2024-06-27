@@ -12,6 +12,9 @@ public interface MetricRepository extends CrudRepository<Metric,Integer> {
     Metric findByExternalid(Integer externalid);
 
     Metric findByName(String name);
+    Metric findByNameAndProject(String name,String project);
 
     List<Metric> findAllByProject(String project);
+
+    Boolean existsByExternalid(Integer externalId);
 }

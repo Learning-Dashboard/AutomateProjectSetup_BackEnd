@@ -54,14 +54,20 @@ public class Project implements Serializable {
     public Integer getId(){
         return id;
     }
+    public String getName(){
+        return name;
+    }
+    public String getSubject(){
+        return subject;
+    }
 
+    public Integer getNum_students(){ return num_students;}
     public String getURL_github(){
         return URL_github;
     }
     public String getURL_taiga(){
         return URL_taiga;
     }
-
     public String getURL_sheets(){
         return URL_sheets;
     }
@@ -93,27 +99,39 @@ public class Project implements Serializable {
                 break;
             }
         }
-        if(index != -1){
+        if(index != -1 && index + 1 < parts.length){
             return parts[index+1];
         }
-        return null;}
-
-    public String getName(){
-        return name;
+        return null;
     }
 
-    public String getSubject(){
-        return subject;
+    public String getID_Sheets(){
+        String[] parts = URL_sheets.split("/");
+
+        int index=-1;
+        for(int i = 0; i< parts.length; i++){
+            if(parts[i].equals("d")){
+                index=i;
+                break;
+            }
+        }
+        if(index != -1 && index + 1 < parts.length){
+            return parts[index+1];
+        }
+        return null;
     }
+
 
     public void setConfig_id(Integer num){
         this.config_id=num;
     }
-
     public void setNum_students(Integer num){this.num_students=num;}
     public Integer getConfig_id(){
         return config_id;
     }
 
 
+    public void setId(int i) {
+        this.id = i;
+    }
 }

@@ -1,13 +1,14 @@
 package com.upc.gessi.automation.rest.controllers;
 
-import com.upc.gessi.automation.domain.controllers.ConfigurationController;
-import com.upc.gessi.automation.domain.controllers.SubjectController;
+import com.upc.gessi.automation.domain.controllers.*;
 import com.upc.gessi.automation.domain.models.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,23 +20,35 @@ public class ConfigurationRestController {
     SubjectController subjectController;
 
     @Autowired
-    ConfigurationController configurationController;
+    MetricController metricController;
 
-    @GetMapping()
+    @Autowired
+    FactorController factorController;
+    @Autowired
+    StrategicIndicatorController strategicIndicatorController;
+
+    @Autowired
+    ConfigurationController configurationController;
+    @Async
+    @GetMapping(value = "/status")
+    public Integer getStatus(@RequestParam(name = "id") Integer id){
+        return configurationController.getActualStatus(id);
+    }
+
+    @PostMapping()
     //public Boolean getconfigProject(@RequestParam(name="name") String name, @RequestParam(name= "subject") String subject){
-    public Boolean getconfigProject(@RequestParam Map<String,String[]> parameters) throws IOException, InterruptedException {
-        for (Map.Entry<String, String[]> project : parameters.entrySet()) {
-            String key = project.getKey();
-            String values = String.valueOf(project.getValue());
-            String[] params = values.split(",");
-            String name = params[0];
-            String subject = params[1];
+    public List<String> getconfigProject(@RequestBody List<Map<String,String>> parameters) throws IOException, InterruptedException {
+        List<String> projects = new ArrayList<>();
+        for (Map<String, String> project : parameters) {
+            String name = project.get("name");
+            String subject = project.get("subject");
             System.out.print(name);
             System.out.print(subject);
 
             configurationController.configure_connect(name,subject);
             configurationController.configure_qreval(name,subject);
 
+            projects.add(name);
             /*if (subjectController.getGithub(subject)) {
                 configurationController.configQR_connect_configGT(name, subject, "github");
                 configurationController.configQR_connect_script(name, subject, "github");
@@ -54,9 +67,12 @@ public class ConfigurationRestController {
 
 
         }
-        return true;
+        configurationController.createConfiguration(projects.size());
+        return projects;
 
     }
+
+    //@GetMapping(value = "/")
 
     /*@GetMapping(value="/eval")
     public Boolean getEvalProject (@RequestParam Map<String,String[]> parameters) throws IOException, InterruptedException {
@@ -76,9 +92,34 @@ public class ConfigurationRestController {
         return true;
 
     }*/
-    @GetMapping(value="/docker")
-    public String configDocker() throws IOException {
-        return configurationController.initDocker("asw","taiga");
+
+    @GetMapping(value = "/imports")
+    public Boolean getImports(){
+        return configurationController.importData();
     }
+
+    /*@PostMapping(value = "/LD")
+    public void configLD(@RequestParam(name = "projects") String project){
+        System.out.print("ADD_METRICS");
+        metricController.addMetrics(project);
+        System.out.print("SET_FACTOR");
+        metricController.setFactorMetric(project);
+        System.out.print("ADD_CATEGORY_METRIC");
+        metricController.addCategoryMetric(project);
+        System.out.print("AAADAKJDKHDKDJHjhg");
+    }*/
+    @PostMapping(value = "/factors")
+    public void configFS(@RequestParam(name = "projects") String project){
+        System.out.println("POST_FACTOR");
+        factorController.postFactor(project);
+        System.out.print("aaaaaaaaaaaaaa");
+        System.out.println("POST_STRATEGIC");
+        strategicIndicatorController.create(project);
+    }
+
+    /*@Async
+    private void performAsyncOperation() {
+        // Tu lógica aquí
+    }*/
 
 }

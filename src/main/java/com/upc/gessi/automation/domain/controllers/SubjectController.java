@@ -2,6 +2,8 @@ package com.upc.gessi.automation.domain.controllers;
 
 import com.upc.gessi.automation.domain.models.Subject;
 import com.upc.gessi.automation.domain.respositories.SubjectRepository;
+import com.upc.gessi.automation.rest.DTO.SubjectDTO;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -14,18 +16,23 @@ public class SubjectController {
     @Autowired
     private SubjectRepository subjectRepository;
 
-    public List<String> getSubjects(){
-        List<String> subjects_names = new ArrayList<>();
+    public List<Subject> getAll(){
+        List<Subject> subjects_names = new ArrayList<>();
         Iterable<Subject> subjects =  subjectRepository.findAll();
         for(Subject sub: subjects){
-            subjects_names.add(sub.getName());
+            subjects_names.add(sub);
         }
         return subjects_names;
     }
 
+    public void create(@NotNull SubjectDTO sub){
+        Subject s = new Subject(sub.getName(),sub.getGithub(),sub.getToken_github(),sub.getTaiga(),sub.getSheets());
+        subjectRepository.save(s);
+    }
+
     public String getTokenGit(String name){
         Subject sub = subjectRepository.findByName(name);
-        return sub.getToken(); // Devuelve el ID del primer proyecto encontrado
+        return sub.getTokenGithub(); // Devuelve el ID del primer proyecto encontrado
     }
     public Boolean getTaiga(String name){
         Subject sub = subjectRepository.findByName(name);
@@ -36,9 +43,9 @@ public class SubjectController {
         Subject sub = subjectRepository.findByName(name);
         return sub.getGithub();
     }
-
     public Boolean getSheets(String name){
         Subject sub = subjectRepository.findByName(name);
         return sub.getSheets();
     }
+
 }

@@ -24,10 +24,16 @@ public class StudentRestController {
     ProjectController projectController;
 
     @GetMapping
-    public List<String>getStudents(){
+    public List<String>getAll(){
         System.out.println("AAAAAAAAAA");
         return studentcontroller.getAll();
     }
+
+    /*@PostMapping(value = "/stu")
+    public void putstudents(){
+        studentcontroller.putStudents("bravo11","asw");
+    }*/
+
     @GetMapping(value="/project")
     public List<StudentDTO> getStudentsProject(@RequestParam(name = "name") String name ,@RequestParam(name = "subject") String subject){
         var project_id = projectController.getId(name, subject);
@@ -35,7 +41,8 @@ public class StudentRestController {
     }
 
     @PostMapping
-    public void createStudent(@RequestBody List<Map<String,Object>> requestDataList){
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createStudents(@RequestBody List<Map<String,Object>> requestDataList){
         for(Map<String, Object> requestData: requestDataList) {
             String name = (String) requestData.get("name");
             String subject = (String) requestData.get("subject");
@@ -48,15 +55,20 @@ public class StudentRestController {
 
             var id_project = projectController.getId(name,subject);
             System.out.print(id_project);
+            System.out.print(members.size());
+            projectController.setNumStudents(members.size()+1,name,subject);
 
             for(Map<String,String> memberData: members){
-                System.out.print(members.size());
-                projectController.setNumStudents(members.size()+1,name,subject);
-                StudentDTO student = new StudentDTO(memberData.get("name"),id_project,memberData.get("githubUsername"),memberData.get("taigaUsername"),null);
+                StudentDTO student = new StudentDTO(memberData.get("name"),id_project,memberData.get("githubUsername"),memberData.get("taigaUsername"),memberData.get("sheetsUsername"));
                 studentcontroller.createStudent(student);
+                //studentcontroller.putStudents(name,subject);
             }
         }
 
+
+    }
+    @PutMapping
+    public void updateStudent(String project, String name, List<String> patata){
 
     }
 

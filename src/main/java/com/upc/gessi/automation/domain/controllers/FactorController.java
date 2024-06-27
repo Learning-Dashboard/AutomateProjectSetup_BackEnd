@@ -26,6 +26,9 @@ public class FactorController {
     @Autowired
     MetricController metricController;
 
+    @Autowired
+    ProjectController projectController;
+
     public Boolean existsFactor(String project,String name){
         List<Factor> factors = factorRepository.findAllByProject(project);
         if(factors.size() == 0) return false;
@@ -107,8 +110,13 @@ public class FactorController {
     }
 
     public void postFactor(String project){
+        Integer num = projectController.getNumStudents(project);
+        System.out.println("REAL" +num);
+        createFactors(project,4,false);
+        System.out.println("ENTRA_POST_FACTOR");
         List<Factor> factors= factorRepository.findAllByProject(project);
         for(Factor f : factors){
+            System.out.println(f.getName());
             if(!existsCategory(f.getCategory())){
                 System.out.print("entraaa if not exists \n");
                 createFactorCategory(f.getCategory());
@@ -152,6 +160,37 @@ public class FactorController {
 
     }
     public Boolean existsCategory(String category){
+        System.out.print("entra exists  "+category);
+        OkHttpClient client = new OkHttpClient();
+        HttpClient httpClient = HttpClient.newHttpClient();
+        Gson gson = new Gson();
+        Boolean found = false;
+
+        try {
+            Request getRequest = new Request.Builder()
+                    .url(new URL("http://host.docker.internal:8888/api/factors/categories?name="+category))
+                    .build();
+
+            Response getResponse = client.newCall(getRequest).execute();
+            if (getResponse.isSuccessful() ) {
+                String data = getResponse.body().string();
+                System.out.print(data);
+                if (data != null && !data.equals("[]")) {
+                    return true;
+                }
+            }
+            else {
+                System.out.print("AAAAAAAAAAAAAAAAAA");
+            }
+            return found;
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Boolean existsFactor(String category){
         System.out.print("entra exists  "+category);
         OkHttpClient client = new OkHttpClient();
         HttpClient httpClient = HttpClient.newHttpClient();
