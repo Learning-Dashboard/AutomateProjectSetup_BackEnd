@@ -37,11 +37,11 @@ services:
     environment:
       DATABASE_USER: postgres
       DATABASE_PASSWORD: secret
-      DATABASE_URL: jdbc:postgresql://tfg_db:5434/postgres
+      DATABASE_URL: jdbc:postgresql://configuration_db:5434/postgres
     ports:
       - "8092:8092"
     depends_on:
-      - tfg_db
+      - configuration_db
     volumes:
     - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/config:/home/connect/run/config
     - ${COMPOSE_PROJECT_HOME}/docker/node-qrconnect/scripts:/home/connect/run/scripts
@@ -51,7 +51,7 @@ services:
     - ./Learning Dashboard:/home/run
 
 
-  tfg_db:
+  configuration_db:
     build:
       context: docker/node-dbconfig/
       args:
